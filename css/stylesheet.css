@@ -109,3 +109,12 @@ img#background-image {
     right:5px;
     z-index:2;
   }
+
+  ul.inline {
+    text-align:center;
+  }
+
+  ul.inline > li {
+    display:inline;
+    padding: 0 10px 0 10px;
+  }
