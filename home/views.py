@@ -21,18 +21,30 @@ def placeorder(request):
         return HttpResponse(status=500)
 
     only_numbers_and_letters_regex = '[^a-zA-Z0-9 ]'
-    name = request.POST.get('name')
+
+    name = request.POST.get('name', 'Forgot to put')
     name = re.sub(only_numbers_and_letters_regex, '_', name, )
+
+    only_numbers = '[^0-9]+';
+    telephone = request.POST.get('tel', '(000) 000-0000')
+    telephone = re.sub(only_numbers, '', telephone, )
+
+    date = request.POST.get('date')
+
+    order = request.POST.get('order')
 
     # if I'm reading this right, I don't have to worry about header injection in the message?
     # https://docs.djangoproject.com/en/4.1/topics/email/#preventing-header-injection
-    message = request.POST.get('order')
-    message = "This is a copy of the order you placed on Ellis Bake Shop for your records," \
-              + " we will reply separately with a confirmation.\n\n" + message
+    email_content = 'Thank you for your order!' + '\n' \
+                    + 'This is a copy for your records, we will reply with a confirmation shortly.' + '\n\n' \
+                    + 'Name: {name}' + '\n' \
+                    + 'Telephone Number: {tel}' + '\n' \
+                    + 'Date: {date}' + '\n' \
+                    + 'Order: \n{order}'
 
     try:
         send_mail(subject='Ellis Bake Shop Order Form: ' + name,
-                  message=message,
+                  message=email_content.format(name=name, tel=telephone, date=date, order=order, ),
                   from_email=EMAIL_HOST_USER,
                   recipient_list=[email_address, EMAIL_HOST_USER], fail_silently=False, )
     except BadHeaderError:
