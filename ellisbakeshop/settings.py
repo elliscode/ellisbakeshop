@@ -45,7 +45,7 @@ secret_file = open(secret_path, 'r')
 SECRET_KEY = secret_file.readline()
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', 'ellisbakeshop.com']
 
@@ -94,6 +94,29 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'ellisbakeshop.wsgi.application'
 
+# email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
+home = Path.home()
+email_path = home / USER_FOLDER_NAME / 'email-credentials.txt'
+if not os.path.isfile(email_path):
+    email_file = open(email_path, 'w')
+    email_file.write("EMAIL_HOST_USER=" + "\n")
+    email_file.write("EMAIL_HOST_PASSWORD=" + "\n")
+    email_file.close()
+email_file = open(email_path, 'r')
+for line in email_file.readlines():
+    if line.startswith("EMAIL_HOST_USER="):
+        value = line[len("EMAIL_HOST_USER="):].strip()
+        if value:
+            EMAIL_HOST_USER = value
+    elif line.startswith("EMAIL_HOST_PASSWORD="):
+        value = line[len("EMAIL_HOST_PASSWORD="):].strip()
+        if value:
+            EMAIL_HOST_PASSWORD = value
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases

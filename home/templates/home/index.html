@@ -31,14 +31,14 @@
   <div id="main" class="container">
     <div class="row">
       <div class="column">
-        <div class="cell">
+        <div class="cell blob">
           <h2>Menu</h2>
         </div>
       </div>
     </div>
     <div class="row">
       <div class="twelve columns">
-        <div class="cell">
+        <div class="cell blob">
           <h3>Pies</h3>
 
           <ul>
@@ -55,7 +55,7 @@
         </div>
       </div>
       <div class="twelve columns">
-        <div class="cell">
+        <div class="cell blob">
           <h3>Macarons</h3>
           <ul>
             <li><span>1 order (25 cookies)</span><span></span><span>$25</span></li>
@@ -78,26 +78,82 @@
             <li>Candied Walnut</li>
             <li>Candied Pecan</li>
           </ul>
-          
+
           <h3>Toppings</h3>
           <ul class="inline">
             <li>Chocolate drizzle</li>
           </ul>
-          
+
         </div>
-        
+
       </div>
     </div>
     <div class="row">
       <div class="column">
-        <div class="cell">
-          <h2>Orders</h2>
-          <p>To place an order, send an email to orders@ellisbakeshop.com</p>
-          <p>Please include your name, phone number, and a list items you would like to order.</p>
+        <div class="cell blob">
+          <h2>Order Form</h2>
+          <form id="orderform" action="/placeorder" method="post" style="margin-bottom:0px;">
+            {% csrf_token %}
+
+              <div class="row">
+                  <div class="six columns">
+                      <div class="cell">
+                          <p>
+                              <label for="name">Your Name:</label>
+                              <input style="width:100%; margin-bottom:0px;" type="text" id="name" name="name"
+                                     placeholder="Firstname Lastname" required/>
+                          </p>
+                      </div>
+                  </div>
+                  <div class="six columns">
+                      <div class="cell">
+                          <p>
+                              <label for="email">Your Email:</label>
+                              <input style="width:100%; margin-bottom:0px;" type="email" id="email" name="email"
+                                     placeholder="youremail@website.com" required autocomplete="email"/>
+                          </p>
+                      </div>
+                  </div>
+              </div>
+              <p>
+              <label for="order">Your Order:</label>
+              <textarea style="width:100%;height:200px;margin-bottom:0px;" id="order" name="order" placeholder="Please include:&#10;&#11;A list of the items you would like to order&#10;&#11;Your desired pickup date&#10;&#11;Any other information you would like" required></textarea>
+            </p>
+            <button type="submit">Place your Order</button>
+          </form>
         </div>
       </div>
     </div>
   </div>
+  <script>
+    let orderForm = document.getElementById('orderform');
+    orderForm.addEventListener('submit', (event) => {
+        // stops the POST call
+        event.preventDefault();
+
+        // disables all of the user input
+        let button = event.target.getElementsByTagName('button')[0];
+        button.setAttribute('disabled','');
+        button.style.backgroundColor='#7c7c7cb8';
+        button.innerText = "Submitting order...";
+        let items = Array.from(event.target.querySelectorAll('input,textarea'));
+        items.forEach(x => x.setAttribute('readonly',''));
+
+        // runs the POST call
+        fetch(event.target.action, {
+            method: 'POST',
+            body: new URLSearchParams(new FormData(event.target))
+        }).then((response) => {
+            if (!response.ok) {
+                button.innerText = "Error submitting order!";
+            } else {
+                button.innerText = "Order submitted!";
+                button.style.backgroundColor = '#01ad16b8';
+                button.style.color = '#000';
+            }
+        });
+    });
+  </script>
 </body>
 
 </html>

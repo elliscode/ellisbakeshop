@@ -1,6 +1,6 @@
 from waitress import serve
 
-from elliscodedotcom.wsgi import application
+from ellisbakeshop.wsgi import application
 
 if __name__ == '__main__':
-    serve(application, port='8001')
+    serve(application, port='8002')
