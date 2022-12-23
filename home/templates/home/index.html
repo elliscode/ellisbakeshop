@@ -2,136 +2,139 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>Ellis Bake Shop</title>
-  <meta name="description" content="">
-  <meta name="author" content="elliscode.com">
-  <meta name="viewport" content="width=device-width">
-  {% load static %}
-  <link rel="shortcut icon" type="image/jpg" href="{% static 'home/favicon.png' %}"/>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'home/css/normalize.css' %}">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'home/css/skeleton.css' %}">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'home/css/stylesheet.css' %}">
-  {% load static %}
-  <link rel="stylesheet" href="{% static 'home/css/list.css' %}">
+    <meta charset="utf-8">
+    <title>Ellis Bake Shop</title>
+    <meta name="description" content="">
+    <meta name="author" content="elliscode.com">
+    <meta name="viewport" content="width=device-width">
+    {% load static %}
+    <link rel="shortcut icon" type="image/jpg" href="{% static 'home/favicon.png' %}"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/css/normalize.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/css/skeleton.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/css/stylesheet.css' %}">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'home/css/list.css' %}">
 </head>
 
 <body>
-  <div id="header">
+<div id="header">
     <h1>Ellis Bake Shop</h1>
-  </div>
-  {% load static %}
-  <a href="https://instagram.com/ellisbakeshop" id="insta"><img src="{% static 'home/insta.png' %}" alt="Instagram Account for ellisbakeshop.com" /></a>
-  <div id="main" class="container">
+</div>
+{% load static %}
+<a href="https://instagram.com/ellisbakeshop" id="insta"><img src="{% static 'home/insta.png' %}"
+                                                              alt="Instagram Account for ellisbakeshop.com"/></a>
+<div id="main" class="container">
     <div class="row">
-      <div class="column">
-        <div class="cell blob">
-          <h2>Menu</h2>
+        <div class="column">
+            <div class="cell blob">
+                <h2>Menu</h2>
+            </div>
         </div>
-      </div>
     </div>
     <div class="row">
-      <div class="twelve columns">
-        <div class="cell blob">
-          <h3>Pies</h3>
+        <div class="twelve columns">
+            <div class="cell blob">
+                <h3>Pies</h3>
 
-          <ul>
-            <li><span>Pumpkin</span><span></span><span>$15</span></li>
-            <li><span>Sweet Potato</span><span></span><span>$15</span></li>
-            <li><span>Apple</span><span></span><span>$15</span></li>
-            <li><span>Peach</span><span></span><span>$15</span></li>
-            <li><span>Pecan</span><span></span><span>$20</span></li>
-            <li><span>Strawberry Rhubarb</span><span></span><span>$20</span></li>
-            <li><span>Fresh Cherry</span><span></span><span>$25</span></li>
-            <li><span>Triple Berry</span><span></span><span>$25</span></li>
-          </ul>
-          <p style="text-align:center;">All pies available based on seasonal ingredient availability</p>
+                <ul>
+                    <li><span>Pumpkin</span><span></span><span>$15</span></li>
+                    <li><span>Sweet Potato</span><span></span><span>$15</span></li>
+                    <li><span>Apple</span><span></span><span>$15</span></li>
+                    <li><span>Peach</span><span></span><span>$15</span></li>
+                    <li><span>Pecan</span><span></span><span>$20</span></li>
+                    <li><span>Strawberry Rhubarb</span><span></span><span>$20</span></li>
+                    <li><span>Fresh Cherry</span><span></span><span>$25</span></li>
+                    <li><span>Triple Berry</span><span></span><span>$25</span></li>
+                </ul>
+                <p style="text-align:center;">All pies available based on seasonal ingredient availability</p>
+            </div>
         </div>
-      </div>
-      <div class="twelve columns">
-        <div class="cell blob">
-          <h3>Macarons</h3>
-          <ul>
-            <li><span>1 order (25 cookies)</span><span></span><span>$25</span></li>
-            <li><span>Multi-color shells</span><span></span><span>&plus;$5 per additional color</span></li>
-            <li><span>Toppings</span><span></span><span>&plus;$5 per topping</span></li>
-          </ul>
-          <h3>Flavors</h3>
-          <ul class="inline">
-            <li>Chocolate</li>
-            <li>Vanilla</li>
-            <li>Oreo</li>
-            <li>Cinnamon</li>
-            <li>Lemon</li>
-            <li>Peanut Butter</li>
-            <li>Brown Sugar</li>
-            <li>Strawberry</li>
-            <li>Blueberry</li>
-            <li>Peach</li>
-            <li>Candy Cane</li>
-            <li>Candied Walnut</li>
-            <li>Candied Pecan</li>
-          </ul>
+        <div class="twelve columns">
+            <div class="cell blob">
+                <h3>Macarons</h3>
+                <ul>
+                    <li><span>1 order (25 cookies)</span><span></span><span>$25</span></li>
+                    <li><span>Multi-color shells</span><span></span><span>&plus;$5 per additional color</span></li>
+                    <li><span>Toppings</span><span></span><span>&plus;$5 per topping</span></li>
+                </ul>
+                <h3>Flavors</h3>
+                <ul class="inline">
+                    <li>Chocolate</li>
+                    <li>Vanilla</li>
+                    <li>Oreo</li>
+                    <li>Cinnamon</li>
+                    <li>Lemon</li>
+                    <li>Peanut Butter</li>
+                    <li>Brown Sugar</li>
+                    <li>Strawberry</li>
+                    <li>Blueberry</li>
+                    <li>Peach</li>
+                    <li>Candy Cane</li>
+                    <li>Candied Walnut</li>
+                    <li>Candied Pecan</li>
+                </ul>
 
-          <h3>Toppings</h3>
-          <ul class="inline">
-            <li>Chocolate drizzle</li>
-          </ul>
+                <h3>Toppings</h3>
+                <ul class="inline">
+                    <li>Chocolate drizzle</li>
+                </ul>
+
+            </div>
 
         </div>
-
-      </div>
     </div>
     <div class="row">
-      <div class="column">
-        <div class="cell blob">
-          <h2>Order Form</h2>
-          <form id="orderform" action="/placeorder" method="post" style="margin-bottom:0px;">
-            {% csrf_token %}
-            <div class="row">
-              <div class="six columns">
-                <label for="name">Your Name:</label>
-                <input class="u-full-width" style="margin-bottom:10px;" type="text" id="name" name="name"
-                       placeholder="Firstname Lastname" required/>
-              </div>
-              <div class="six columns">
-                <label for="email">Your Email:</label>
-                <input class="u-full-width" style="margin-bottom:10px;" type="email" id="email" name="email"
-                       placeholder="youremail@website.com" required autocomplete="email"/>
-              </div>
+        <div class="column">
+            <div class="cell blob">
+                <h2>Order Form</h2>
+                <form id="orderform" action="/placeorder" method="post" style="margin-bottom:0px;">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="six columns">
+                            <label for="name">Your Name:</label>
+                            <input class="u-full-width" style="margin-bottom:10px;" type="text" id="name" name="name"
+                                   placeholder="Firstname Lastname" required/>
+                        </div>
+                        <div class="six columns">
+                            <label for="email">Your Email:</label>
+                            <input class="u-full-width" style="margin-bottom:10px;" type="email" id="email" name="email"
+                                   placeholder="youremail@website.com" required autocomplete="email"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="six columns">
+                            <label for="tel">Phone Number:</label>
+                            <input class="u-full-width" style="margin-bottom:10px;" type="tel" id="tel" name="tel"
+                                   placeholder="(XXX) XXX-XXXX" required/>
+                        </div>
+                        <div class="six columns">
+                            <label for="date">Pickup Date:</label>
+                            <input class="u-full-width" style="height:38px; margin-bottom:10px;" type="date" id="date"
+                                   name="date" required/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="twelve columns">
+                            <label for="order">Your Order:</label>
+                            <textarea class="u-full-width" style="height:200px;margin-bottom:0px;" id="order"
+                                      name="order"
+                                      placeholder="Please include a list of the items you would like to order, any special requests, and any other information you would like me to know"
+                                      required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit">Place your Order</button>
+                </form>
             </div>
-            <div class="row">
-              <div class="six columns">
-                <label for="tel">Phone Number:</label>
-                <input class="u-full-width" style="margin-bottom:10px;" type="tel" id="tel" name="tel"
-                       placeholder="(XXX) XXX-XXXX" required/>
-              </div>
-              <div class="six columns">
-                <label for="date">Pickup Date:</label>
-                <input class="u-full-width" style="height:38px; margin-bottom:10px;" type="date" id="date" name="date" required/>
-              </div>
-            </div>
-            <div class="row">
-              <div class="twelve columns">
-                <label for="order">Your Order:</label>
-                <textarea class="u-full-width" style="height:200px;margin-bottom:0px;" id="order" name="order"
-                          placeholder="Please include:&#10;&#11;A list of the items you would like to order&#10;&#11;Your desired pickup date&#10;&#11;Any other information you would like"
-                          required></textarea>
-              </div>
-            </div>
-            <button type="submit">Place your Order</button>
-          </form>
         </div>
-      </div>
     </div>
-  </div>
-  <script>
+</div>
+<script>
     let orderForm = document.getElementById('orderform');
     orderForm.addEventListener('submit', (event) => {
         // stops the POST call
@@ -159,7 +162,8 @@
             }
         });
     });
-  </script>
+
+</script>
 </body>
 
 </html>

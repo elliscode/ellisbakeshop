@@ -83,3 +83,10 @@ form button {
     color:#fff;
     margin-bottom:0px;
 }
+
+input[type="date"]
+{
+    display:block;
+    -webkit-appearance: textfield;
+    -moz-appearance: textfield;
+}
