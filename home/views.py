@@ -46,7 +46,7 @@ def placeorder(request):
         send_mail(subject='Ellis Bake Shop Order Form: ' + name,
                   message=email_content.format(name=name, tel=telephone, date=date, order=order, ),
                   from_email=EMAIL_HOST_USER,
-                  recipient_list=[email_address, EMAIL_HOST_USER], fail_silently=False, )
+                  recipient_list=[EMAIL_HOST_USER], fail_silently=False, )
     except BadHeaderError:
         return HttpResponse(status=500)
     return HttpResponse(status=204)
