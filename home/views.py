@@ -35,9 +35,7 @@ def placeorder(request):
 
     # if I'm reading this right, I don't have to worry about header injection in the message?
     # https://docs.djangoproject.com/en/4.1/topics/email/#preventing-header-injection
-    email_content = 'Thank you for your order!' + '\n' \
-                    + 'This is a copy for your records, we will reply with a confirmation shortly.' + '\n\n' \
-                    + 'Name: {name}' + '\n' \
+    email_content = 'Name: {name}' + '\n' \
                     + 'Telephone Number: {tel}' + '\n' \
                     + 'Date: {date}' + '\n' \
                     + 'Order: \n{order}'
