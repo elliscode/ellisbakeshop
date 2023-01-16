@@ -1,33 +1,21 @@
 # Setup
 
-Create virtual environment:
-
 ```
-python -m venv env
+~/Python311/Scripts/pipenv lock
 ```
 
-Activate virtual environment:
-
 ```
-cd env/Scripts/ && . activate && cd ../../
+~/Python311/Scripts/pipenv sync
 ```
 
-Install requirements:
-
 ```
-pip install -r requirements.txt
+~/Python311/Scripts/pipenv run manage.py collectstatic
 ```
 
-Collect static files:
+# Run
 
 ```
-python manage.py collectstatic
-```
-
-Run WSGI server:
-
-```
-python server.py
+~/Python311/Scripts/pipenv run server.py
 ```
 
 # Cache and secrets folder layout
