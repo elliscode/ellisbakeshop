@@ -36,13 +36,14 @@ def placeorder(request):
     # if I'm reading this right, I don't have to worry about header injection in the message?
     # https://docs.djangoproject.com/en/4.1/topics/email/#preventing-header-injection
     email_content = 'Name: {name}' + '\n' \
+                    + 'Email: {email}' + '\n' \
                     + 'Telephone Number: {tel}' + '\n' \
                     + 'Date: {date}' + '\n' \
                     + 'Order: \n{order}'
 
     try:
         send_mail(subject='Ellis Bake Shop Order Form: ' + name,
-                  message=email_content.format(name=name, tel=telephone, date=date, order=order, ),
+                  message=email_content.format(name=name, tel=telephone, date=date, order=order, email=email_address, ),
                   from_email=EMAIL_HOST_USER,
                   recipient_list=[EMAIL_HOST_USER], fail_silently=False, )
     except BadHeaderError:
