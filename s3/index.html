@@ -7,27 +7,27 @@
     <meta name="description" content="">
     <meta name="author" content="elliscode.com">
     <meta name="viewport" content="width=device-width">
-    {% load static %}
-    <link rel="shortcut icon" type="image/jpg" href="{% static 'home/favicon.png' %}"/>
+    
+    <link rel="shortcut icon" type="image/jpg" href="favicon.png"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/css/normalize.css' %}">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/css/skeleton.css' %}">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/css/stylesheet.css' %}">
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'home/css/list.css' %}">
+    
+    <link rel="stylesheet" href="css/normalize.css">
+    
+    <link rel="stylesheet" href="css/skeleton.css">
+    
+    <link rel="stylesheet" href="css/stylesheet.css">
+    
+    <link rel="stylesheet" href="css/list.css">
 </head>
 
 <body>
 <div id="header">
     <h1>Ellis Bake Shop</h1>
 </div>
-{% load static %}
-<a href="https://instagram.com/ellisbakeshop" id="insta"><img src="{% static 'home/insta.png' %}"
+
+<a href="https://instagram.com/ellisbakeshop" id="insta"><img src="insta.png"
                                                               alt="Instagram Account for ellisbakeshop.com"/></a>
 <div id="main" class="container">
     <div class="row">
@@ -93,8 +93,7 @@
         <div class="column">
             <div class="cell blob">
                 <h2>Order Form</h2>
-                <form id="orderform" action="/placeorder" method="post" style="margin-bottom:0px;">
-                    {% csrf_token %}
+                <form id="orderform" onsubmit="submitForm(event)" method="post" style="margin-bottom:0px;">
                     <div class="row">
                         <div class="six columns">
                             <label for="name">Your Name:</label>
@@ -128,41 +127,52 @@
                                       required></textarea>
                         </div>
                     </div>
-                    <button type="submit">Place your Order</button>
+                    <button id="submit-button" type="submit">Place your Order</button>
                 </form>
             </div>
         </div>
     </div>
 </div>
 <script>
-    let orderForm = document.getElementById('orderform');
-    orderForm.addEventListener('submit', (event) => {
+    const button = document.getElementById('submit-button');
+    function submitForm(event) {
         // stops the POST call
         event.preventDefault();
 
         // disables all of the user input
-        let button = event.target.getElementsByTagName('button')[0];
         button.setAttribute('disabled','');
         button.style.backgroundColor='#7c7c7cb8';
         button.innerText = "Submitting order...";
         let items = Array.from(event.target.querySelectorAll('input,textarea'));
         items.forEach(x => x.setAttribute('readonly',''));
 
-        // runs the POST call
-        fetch(event.target.action, {
-            method: 'POST',
-            body: new URLSearchParams(new FormData(event.target))
-        }).then((response) => {
-            if (!response.ok) {
-                button.innerText = "Error submitting order!";
-            } else {
-                button.innerText = "Order submitted!";
-                button.style.backgroundColor = '#01ad16b8';
-                button.style.color = '#000';
-            }
-        });
-    });
-
+        // name, email, tel, date, order
+        let url = 'https://rsyi88mrj6.execute-api.us-east-1.amazonaws.com/test/submitorder';
+        let xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", url, true);
+        xmlHttp.onload = handle;
+        xmlHttp.send(JSON.stringify({
+            'name': getFieldValue('name'),
+            'email': getFieldValue('email'),
+            'tel': getFieldValue('tel'),
+            'date': getFieldValue('date'),
+            'order': getFieldValue('order'),
+        }));
+    }
+    function handle(event) {
+        let xmlHttp = event.target;
+        if (xmlHttp.status != 200) {
+            button.innerText = "Error submitting order!";
+        } else {
+            button.innerText = "Order submitted!";
+            button.style.backgroundColor = '#01ad16b8';
+            button.style.color = '#000';
+        }
+    }
+    function getFieldValue(elementId) {
+        const element = document.getElementById(elementId);
+        return element.value;
+    }
 </script>
 </body>
 
