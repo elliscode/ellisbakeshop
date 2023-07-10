@@ -147,7 +147,7 @@
         items.forEach(x => x.setAttribute('readonly',''));
 
         // name, email, tel, date, order
-        let url = 'https://rsyi88mrj6.execute-api.us-east-1.amazonaws.com/test/submitorder';
+        let url = 'https://api.ellisbakeshop.com/submitorder';
         let xmlHttp = new XMLHttpRequest();
         xmlHttp.open("POST", url, true);
         xmlHttp.onload = handle;
