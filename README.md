@@ -1,24 +1,7 @@
-# Setup
+# setup
 
-```
-~/Python311/Scripts/pipenv lock
-```
+1. upload all content in s3 folder to a s3 website
+1. create a lambda and upload the python files in the lambda folder
+1. set up an API gateway with an ANY method with proxy integration and set your lambda as the target of the lambda integration
 
-```
-~/Python311/Scripts/pipenv sync
-```
-
-```
-~/Python311/Scripts/pipenv run manage.py collectstatic
-```
-
-# Run
-
-```
-~/Python311/Scripts/pipenv run server.py
-```
-
-# Cache and secrets folder layout
-
-- `$HOME/ellisbakeshop`
-    - `secret-key.txt` &mdash; automatically generated on the startup of the server, see `/ellisbakeshop/settings.py`
+![S3 website calls API gateway which calls lambda](flow.png)
