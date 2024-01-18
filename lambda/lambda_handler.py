@@ -11,10 +11,10 @@ sqs = boto3.client("sqs")
 
 def lambda_handler(event, context):
     print(json.dumps(event))
-    if not 'origin' in event['headers'] or not event['headers']['origin'].startswith('https://www.ellisbakeshop.com'):
+    if event['httpMethod'] != 'POST' or not 'origin' in event['headers'] or not event['headers']['origin'].startswith('https://www.ellisbakeshop.com'):
         return {
             "statusCode": 403,
-            "body": "Invalid origin",
+            "body": "Forbidden",
             "headers": {
                 "Access-Control-Allow-Origin": "*",
             }
