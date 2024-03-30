@@ -39,4 +39,5 @@ text-align:center;
 ul.inline > li {
 display:inline;
 padding: 0 10px 0 10px;
+white-space: nowrap;
 }

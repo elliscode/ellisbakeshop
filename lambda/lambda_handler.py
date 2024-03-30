@@ -1,4 +1,5 @@
 import os
+import re
 import json
 import boto3
 from botocore.exceptions import ClientError
@@ -29,6 +30,9 @@ def lambda_handler(event, context):
     
     send_email(name, phone, email, date, order)
     send_text(name, phone, email, date, order)
+    parsed_phone = parse_valid_us_phone_number(phone)
+    if parsed_phone:
+        send_ack(parsed_phone)
     
     return {
         "statusCode": 200,
@@ -45,6 +49,28 @@ def parse_body(body):
         return json.loads(body)
     else:
         return dict(parse_qsl(body))
+        
+
+def send_ack(phone):
+    # generate and send message if you are creating a new otp
+    message = {
+        "phone": phone,
+        "message": f"Thank you for placing your order at ellisbakeshop.com! I will reach out shortly to confirm the details of your order.",
+    }
+    print(message)
+    sqs.send_message(
+        QueueUrl=SQS_QUEUE_URL,
+        MessageBody=json.dumps(message)
+    )
+
+
+def parse_valid_us_phone_number(phone):
+    stripped_number = re.sub('[^\d]+', '', phone)
+    if stripped_number.startswith('1'):
+        stripped_number = stripped_number[1:]
+    if len(stripped_number) == 10:
+        return stripped_number
+    return None
         
 
 def send_text(name, phone, email, date, order):
