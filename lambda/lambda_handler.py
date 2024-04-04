@@ -1,16 +1,218 @@
-import os
-import re
 import json
-import boto3
+import traceback
 from botocore.exceptions import ClientError
+from ellisbakeshop.utils import (
+    otp_route,
+    login_route,
+    path_equals,
+    format_response,
+    ios_cookie_refresh_route,
+    path_starts_with,
+    clear_all_tokens_route,
+    authenticate,
+    TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+    urllib,
+    re,
+    ADMIN_PHONE,
+    sqs,
+    SMS_SQS_QUEUE_URL,
+    dynamo,
+    TABLE_NAME,
+    python_obj_to_dynamo_obj,
+    dynamo_obj_to_python_obj,
+    time,
+    os,
+    boto3,
+)
 
-ADMIN_PHONE = os.environ['ADMIN_PHONE']
 ADMIN_SENDER_EMAIL = os.environ['ADMIN_SENDER_EMAIL']
 ADMIN_RECIPIENT_EMAIL = os.environ['ADMIN_RECIPIENT_EMAIL']
-SQS_QUEUE_URL = os.environ['SQS_QUEUE_URL']
-sqs = boto3.client("sqs")
 
 def lambda_handler(event, context):
+    try:
+        print(json.dumps(event))
+        result = route(event)
+        print(result)
+        return result
+    except Exception:
+        traceback.print_exc()
+        return format_response(event=event, http_code=500, body="Internal server error")
+        
+        
+def health_route(event):
+    return format_response(event=event, http_code=200, body="Healthy")
+    
+    
+@authenticate
+def login_test_route(event, user_data, body):
+    return format_response(event=event, http_code=200, body="You are logged in")
+    
+    
+def receive_route(event):
+    print(event)
+
+    parsed_body = urllib.parse.parse_qs(event["body"])
+
+    print(parsed_body)
+
+    from_number = parse_valid_us_phone_number(parsed_body["From"][0])
+
+    if not from_number:
+        message = {
+            "phone": ADMIN_PHONE,
+            "message": f"Received a text message from {from_number} which is not valid",
+        }
+        print(message)
+        return {
+            "statusCode": 200,
+            "body": "<Response/>",
+            "headers": {
+                "Content-Type": "application/xml",
+            },
+        }
+
+    print(f"Received a text message from {from_number}, checking if account exists...")
+
+    username = parse_valid_us_phone_number(from_number)
+    
+    print(username)
+
+    msg_text = parsed_body["Body"][0]
+
+    print(msg_text)
+
+    message = {
+        "phone": ADMIN_PHONE, 
+        "message": f"ellisbakeshop.com\nFrom: {username}\nMessage: {msg_text[:116]}",
+        "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+    }
+    print(message)
+    sqs.send_message(
+        QueueUrl=SMS_SQS_QUEUE_URL,
+        MessageBody=json.dumps(message),
+    )
+    store_communication(from_number, from_number, msg_text)
+
+    return {
+        "statusCode": 200,
+        "body": "<Response/>",
+        "headers": {
+            "Content-Type": "application/xml",
+        },
+    }
+    
+
+def store_communication(parsed_customer_phone, parsed_sender_phone, msg_text, metadata={}):
+    response = dynamo.get_item(
+        TableName=TABLE_NAME,
+        Key=python_obj_to_dynamo_obj({"key1": f"customer", "key2": parsed_customer_phone}),
+    )
+    
+    items = []
+    msg_time = int(time.mktime(time.gmtime()))
+    if "Item" in response:
+        user_data = dynamo_obj_to_python_obj(response["Item"])
+    else:
+        user_data = {"key1": f"customer", "key2": f"{parsed_customer_phone}"}
+    
+    user_data["last_message_time"] = msg_time
+    if 'email' in metadata and metadata['email']:
+        user_data["email"] = metadata['email']
+    if 'name' in metadata and metadata['name']:
+        user_data["name"] = metadata['name']
+        
+    items.append({"PutRequest": {"Item": python_obj_to_dynamo_obj(user_data)}})
+    items.append({"PutRequest": {"Item": python_obj_to_dynamo_obj({"key1": f"message_{parsed_customer_phone}", "key2": f"{msg_time}", "message": msg_text, 'from': parsed_sender_phone})}})
+    response = dynamo.batch_write_item(RequestItems={TABLE_NAME: items})
+    
+    
+@authenticate
+def get_customers_route(event, user_data, body):
+    response = dynamo.query(
+        TableName=TABLE_NAME,
+        KeyConditions={
+            "key1": {
+                "AttributeValueList": [{"S": f"customer"}],
+                "ComparisonOperator": "EQ",
+            },
+        },
+    )
+    phone_list = []
+    for item in response.get("Items", []):
+        python_item = dynamo_obj_to_python_obj(item)
+        customer_data = {'phone': python_item["key2"]}
+        if python_item.get('email'):
+            customer_data['email'] = python_item.get('email')
+        if python_item.get('name'):
+            customer_data['name'] = python_item.get('name')
+        phone_list.append(customer_data)
+    return format_response(event=event, http_code=200, body=phone_list)
+    
+    
+@authenticate
+def get_messages_route(event, user_data, body):
+    if 'phone' not in body:
+        return format_response(event=event, http_code=400, body="You need to supply a phone number")
+    phone = parse_valid_us_phone_number(body['phone'])
+    if not phone:
+        return format_response(event=event, http_code=400, body="You need to supply a valid US phone number")
+    output = []
+    response = dynamo.query(
+        TableName=TABLE_NAME,
+        KeyConditions={
+            "key1": {
+                "AttributeValueList": [{"S": f"message_{phone}"}],
+                "ComparisonOperator": "EQ",
+            },
+        },
+        ScanIndexForward=False,
+    )
+    for item in response.get("Items", []):
+        print(item)
+        python_item = dynamo_obj_to_python_obj(item)
+        output.append(python_item)
+    return format_response(event=event, http_code=200, body=output)
+    
+    
+@authenticate
+def send_message_route(event, user_data, body):
+    if 'phone' not in body:
+        return format_response(event=event, http_code=400, body="You need to supply a phone number")
+    phone = parse_valid_us_phone_number(body['phone'])
+    if not phone:
+        return format_response(event=event, http_code=400, body="You need to supply a valid US phone number")
+    if 'message' not in body or not body['message']:
+        return format_response(event=event, http_code=400, body="You need to supply a message to send")
+        
+    username = phone
+    msg_text = body['message']
+    
+    store_communication(username, parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM), msg_text)
+
+    message = {
+        "phone": username, 
+        "message": f"{msg_text}",
+        "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+    }
+    print(message)
+    sqs.send_message(
+        QueueUrl=SMS_SQS_QUEUE_URL,
+        MessageBody=json.dumps(message),
+    )
+    
+    return format_response(event=event, http_code=200, body="Sent the message to the user")
+    
+
+def parse_valid_us_phone_number(phone):
+    stripped_number = re.sub('[^\d]+', '', phone)
+    if stripped_number.startswith('1'):
+        stripped_number = stripped_number[1:]
+    if len(stripped_number) == 10:
+        return stripped_number
+    return None
+    
+
+def order_route(event):
     print(json.dumps(event))
     if event['httpMethod'] != 'POST' or not 'origin' in event['headers'] or not event['headers']['origin'].startswith('https://www.ellisbakeshop.com'):
         return {
@@ -28,11 +230,11 @@ def lambda_handler(event, context):
     date = body['date']
     order = body['order']
     
-    send_email(name, phone, email, date, order)
+    email_text = send_email(name, phone, email, date, order)
     send_text(name, phone, email, date, order)
     parsed_phone = parse_valid_us_phone_number(phone)
     if parsed_phone:
-        send_ack(parsed_phone)
+        store_communication(parsed_phone, parsed_phone, email_text, {'name': name, 'email': email})
     
     return {
         "statusCode": 200,
@@ -51,37 +253,17 @@ def parse_body(body):
         return dict(parse_qsl(body))
         
 
-def send_ack(phone):
-    # generate and send message if you are creating a new otp
-    message = {
-        "phone": phone,
-        "message": f"Thank you for placing your order at ellisbakeshop.com! I will reach out shortly to confirm the details of your order.",
-    }
-    print(message)
-    sqs.send_message(
-        QueueUrl=SQS_QUEUE_URL,
-        MessageBody=json.dumps(message)
-    )
-
-
-def parse_valid_us_phone_number(phone):
-    stripped_number = re.sub('[^\d]+', '', phone)
-    if stripped_number.startswith('1'):
-        stripped_number = stripped_number[1:]
-    if len(stripped_number) == 10:
-        return stripped_number
-    return None
-        
-
 def send_text(name, phone, email, date, order):
     # generate and send message if you are creating a new otp
     message = {
         "phone": ADMIN_PHONE,
         "message": f"You received an order on ellisbakeshop from:\n{name}\n{phone}\n{email}\n{date}",
     }
+    if TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM:
+        message['sender'] = TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM
     print(message)
     sqs.send_message(
-        QueueUrl=SQS_QUEUE_URL,
+        QueueUrl=SMS_SQS_QUEUE_URL,
         MessageBody=json.dumps(message)
     )
 
@@ -159,3 +341,41 @@ Thanks for placing your order with ellisbakeshop.com, here is a summary:
     else:
         print("Email sent! Message ID:"),
         print(response['MessageId'])
+        
+    return BODY_TEXT
+
+
+
+# Only using POST because I want to prevent CORS preflight checks, and setting a
+# custom header counts as "not a simple request" or whatever, so I need to pass
+# in the CSRF token (don't want to pass as a query parameter), so that really
+# only leaves POST as an option, as GET has its body removed by AWS somehow
+#
+# see https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS#simple_requests
+def route(event):
+    if path_equals(event=event, method="POST", path="/health"):
+        return health_route(event)
+    if path_equals(event=event, method="POST", path="/otp"):
+        return otp_route(event)
+    if path_equals(event=event, method="POST", path="/login"):
+        return login_route(event)
+    if path_equals(event=event, method="POST", path="/logout-all"):
+        return clear_all_tokens_route(event)
+    if path_equals(event=event, method="POST", path="/login-test"):
+        return login_test_route(event)
+    if path_equals(event=event, method="POST", path="/receive"):
+        return receive_route(event)
+    if path_equals(event=event, method="POST", path="/messages/receive"):
+        return receive_route(event)
+    if path_equals(event=event, method="POST", path="/messages/get"):
+        return get_messages_route(event)
+    if path_equals(event=event, method="POST", path="/customers/get"):
+        return get_customers_route(event)
+    if path_equals(event=event, method="POST", path="/messages/send"):
+        return send_message_route(event)
+    if path_equals(event=event, method="POST", path="/order"):
+        return order_route(event)
+    if path_equals(event=event, method="POST", path="/submitorder"):
+        return order_route(event)
+
+    return format_response(event=event, http_code=404, body="No matching route found")
