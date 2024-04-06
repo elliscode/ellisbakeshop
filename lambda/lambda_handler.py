@@ -81,17 +81,19 @@ def receive_route(event):
 
     print(msg_text)
 
-    message = {
-        "phone": ADMIN_PHONE, 
-        "message": f"ellisbakeshop.com\nFrom: {username}\nMessage: {msg_text[:116]}",
-        "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
-    }
-    print(message)
-    sqs.send_message(
-        QueueUrl=SMS_SQS_QUEUE_URL,
-        MessageBody=json.dumps(message),
-    )
     store_communication(from_number, from_number, msg_text)
+
+    if parse_valid_us_phone_number(ADMIN_PHONE) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
+        message = {
+            "phone": ADMIN_PHONE, 
+            "message": f"ellisbakeshop.com\nFrom: {username}\nMessage: {msg_text[:116]}",
+            "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+        }
+        print(message)
+        sqs.send_message(
+            QueueUrl=SMS_SQS_QUEUE_URL,
+            MessageBody=json.dumps(message),
+        )
 
     return {
         "statusCode": 200,
@@ -189,16 +191,17 @@ def send_message_route(event, user_data, body):
     
     store_communication(username, parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM), msg_text)
 
-    message = {
-        "phone": username, 
-        "message": f"{msg_text}",
-        "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
-    }
-    print(message)
-    sqs.send_message(
-        QueueUrl=SMS_SQS_QUEUE_URL,
-        MessageBody=json.dumps(message),
-    )
+    if parse_valid_us_phone_number(username) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
+        message = {
+            "phone": username, 
+            "message": f"{msg_text}",
+            "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+        }
+        print(message)
+        sqs.send_message(
+            QueueUrl=SMS_SQS_QUEUE_URL,
+            MessageBody=json.dumps(message),
+        )
     
     return format_response(event=event, http_code=200, body="Sent the message to the user")
     
@@ -234,6 +237,7 @@ def order_route(event):
     send_text(name, phone, email, date, order)
     parsed_phone = parse_valid_us_phone_number(phone)
     if parsed_phone:
+        send_confirmation_text(parsed_phone)
         store_communication(parsed_phone, parsed_phone, email_text, {'name': name, 'email': email})
     
     return {
@@ -254,18 +258,31 @@ def parse_body(body):
         
 
 def send_text(name, phone, email, date, order):
-    # generate and send message if you are creating a new otp
-    message = {
-        "phone": ADMIN_PHONE,
-        "message": f"You received an order on ellisbakeshop from:\n{name}\n{phone}\n{email}\n{date}",
-    }
-    if TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM:
-        message['sender'] = TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM
-    print(message)
-    sqs.send_message(
-        QueueUrl=SMS_SQS_QUEUE_URL,
-        MessageBody=json.dumps(message)
-    )
+    if parse_valid_us_phone_number(ADMIN_PHONE) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
+        message = {
+            "phone": ADMIN_PHONE,
+            "message": f"You received an order on ellisbakeshop from:\n{name}\n{phone}\n{email}\n{date}",
+            "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+        }
+        print(message)
+        sqs.send_message(
+            QueueUrl=SMS_SQS_QUEUE_URL,
+            MessageBody=json.dumps(message)
+        )
+    
+    
+def send_confirmation_text(phone):
+    if parse_valid_us_phone_number(phone) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
+        message = {
+            "phone": f"+1{phone}",
+            "message": f"Thank you for placing your order on ellisbakeshop! I will reach out to confirm the details of your order shortly.",
+            "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
+        }
+        print(message)
+        sqs.send_message(
+            QueueUrl=SMS_SQS_QUEUE_URL,
+            MessageBody=json.dumps(message)
+        )
 
 
 def send_email(name, phone, email, date, order):

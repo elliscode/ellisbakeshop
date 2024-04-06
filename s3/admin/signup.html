@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <title>Ellis Bake Shop Admin Panel - Login</title>
+    <meta name="description" content="You shouldn't be here">
+    <meta name="author" content="elliscode.com">
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" type="image/jpg" href="../favicon.png"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/normalize.css?v=001">
+    <link rel="stylesheet" href="../css/skeleton.css?v=001">
+    <link rel="stylesheet" href="../css/stylesheet.css?v=001">
+    <link rel="stylesheet" href="../css/list.css?v=001">
+  </head>
+
+  <body>
+    <div id="main" class="container">
+        <div class="row">
+            <div class="column">
+                <div class="cell blob">
+                  <form method="post" onsubmit="sendOtp(event)">
+                    <p>
+                      <label for="phone">Telephone Number:</label>
+                      <input class="big" type="tel" id="phone" name="phone" />
+                    </p>
+                    <button type="submit">Log In</button>
+                  </form>
+                  <div style="display: none" id="message" class="error"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/utils.js?v=006"></script>
+    <script>
+      const messageDiv = document.getElementById("message");
+      function sendOtp(event) {
+        event.preventDefault();
+        const phone = document.getElementById("phone").value;
+
+        let url = API_DOMAIN + "/otp";
+        let xmlHttp = new XMLHttpRequest();
+        xmlHttp.open("POST", url, true); // false for synchronous request
+        xmlHttp.withCredentials = true;
+        xmlHttp.onload = handle;
+        xmlHttp.onerror = handleError;
+        xmlHttp.send(JSON.stringify({ phone: phone }));
+      }
+      function handleError(event) {
+        messageDiv.style.display = "block";
+        messageDiv.innerHTML =
+          'You may need to allow the certificate for our API, please visit <a href="' +
+          API_DOMAIN +
+          '">' +
+          API_DOMAIN +
+          "</a>";
+      }
+      function handle(event) {
+        let xmlHttp = event.target;
+        if (xmlHttp.status == 200) {
+          let result = JSON.parse(xmlHttp.responseText);
+          window.location.replace(
+            "login.html?username=" + encodeURIComponent(result.username)
+          );
+        } else {
+          let result = JSON.parse(xmlHttp.responseText);
+          if (result.hasOwnProperty("message")) {
+            messageDiv.style.display = "block";
+            messageDiv.textContent = result.message;
+          }
+        }
+      }
+    </script>
+  </body>
+</html>

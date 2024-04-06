@@ -1,0 +1,48 @@
+.container {
+  margin-top:8px;
+}
+.admin-panel {
+  position:relative;
+}
+.admin-panel button {
+  display:inline-block;
+}
+.admin-panel button.back {
+  position:absolute;
+  top:0px;
+  left:0px;
+}
+.admin-panel .message {
+  background-color: #fffa;
+  padding: 8px;
+  position: relative;
+  margin: 0px 0px 8px 0px;
+  border-radius: 1em;
+}
+.admin-panel .message:last-child {
+  margin:0px;
+}
+.admin-panel .message .date {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+.admin-panel .message .from {
+}
+.admin-panel .message .text {
+}
+.admin-panel .messaging-nav-bar {
+  display:flex;
+}
+.admin-panel .messaging-nav-bar textarea {
+  flex-grow:1;
+  height:114px;
+}
+.admin-panel .messaging-nav-bar .buttons {
+  display:flex;
+  flex-direction: column;
+}
+.admin-panel .messaging-nav-bar .buttons button {
+  margin: 0px;
+  padding: 0px 1em 0px 1em;
+}

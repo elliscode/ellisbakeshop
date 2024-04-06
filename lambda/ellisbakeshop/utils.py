@@ -301,7 +301,14 @@ def otp_route(event):
 
 
 def alert_admin_of_attempted_login(phone):
-    # generate and send message if you are creating a new otp
+    warning_response = dynamo.get_item(
+        Key=python_obj_to_dynamo_obj({"key1": "warning", "key2": "login"}),
+        TableName=TABLE_NAME,
+    )
+    if "Item" in warning_response:
+        warning_dict = dynamo_obj_to_python_obj(warning_response["Item"])
+        if warning_dict['expiration'] > int(time.time()):
+            return
     message = {
         "phone": ADMIN_PHONE,
         "message": f"Someone tried to log into ellisbakeshop admin console!\n\nPhone: {phone}",
@@ -310,6 +317,16 @@ def alert_admin_of_attempted_login(phone):
     sqs.send_message(
         QueueUrl=SMS_SQS_QUEUE_URL,
         MessageBody=json.dumps(message),
+    )
+    python_data = {
+        "key1": "warning",
+        "key2": "login",  # .              m    s
+        "expiration": int(time.time()) + (60 * 60),
+    }
+    dynamo_data = python_obj_to_dynamo_obj(python_data)
+    dynamo.put_item(
+        TableName=TABLE_NAME,
+        Item=dynamo_data,
     )
 
 

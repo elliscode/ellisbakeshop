@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8">
+    <title>Ellis Bake Shop Admin Panel</title>
+    <meta name="description" content="You shouldn't be here">
+    <meta name="author" content="elliscode.com">
+    <meta name="viewport" content="width=device-width">
+    <link rel="shortcut icon" type="image/jpg" href="../favicon.png"/>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/normalize.css?v=001">
+    <link rel="stylesheet" href="../css/skeleton.css?v=001">
+    <link rel="stylesheet" href="../css/stylesheet.css?v=001">
+    <link rel="stylesheet" href="../css/list.css?v=001">
+    <link rel="stylesheet" href="css/admin.css?v=002">
+  </head>
+
+  <body>
+    <div id="main" class="container">
+        <div class="row">
+            <div class="column">
+                <div class="cell blob">
+                  <div class="logout">
+                    <button onclick="logOut(event)">Log out</button>
+                    <button onclick="logOutAll(event)">Log out all</button>
+                  </div>
+                  <div id="content" class="admin-panel"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/utils.js?v=006"></script>
+    <script>
+// if (!csrfToken) {
+//   window.location.replace("signup.html");
+// }
+const contentDiv = document.getElementById('content');
+function clearContent() {
+  while(contentDiv.firstElementChild) {
+    contentDiv.firstElementChild.remove();
+  }
+}
+function getConversations(event) {
+  clearContent();
+
+  let url = API_DOMAIN + "/customers/get";
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("POST", url, true); // false for synchronous request
+  xmlHttp.withCredentials = true;
+  xmlHttp.onload = handleConversations;
+  xmlHttp.send(JSON.stringify({ csrf: csrfToken }));
+}
+function handleConversations(event) {
+  let result = defaultHandler(event);
+  for (let user of result.responseJson) {
+    let name = user.phone;
+    if (user.name) {
+      name = user.name;
+    } else if (user.email) {
+      name = user.email;
+    }
+    let button = document.createElement('button');
+    button.innerText = name;
+    button.setAttribute('phone', user.phone);
+    button.addEventListener('click', fetchConversation);
+    contentDiv.appendChild(button);
+  }
+}
+let phone = undefined;
+function fetchConversation(event) {
+  clearContent();
+
+  phone = event.target.getAttribute('phone');
+  if (!phone) {
+    return;
+  }
+  let url = API_DOMAIN + "/messages/get";
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("POST", url, true); // false for synchronous request
+  xmlHttp.withCredentials = true;
+  xmlHttp.onload = handleConversation;
+  xmlHttp.send(JSON.stringify({ csrf: csrfToken, phone: phone }));
+}
+function handleConversation(event) {
+  let navBar = document.createElement('div');
+  navBar.classList.add('messaging-nav-bar')
+
+  let buttonDiv = document.createElement('div');
+  buttonDiv.classList.add('buttons');
+
+  let backButton = document.createElement('button');
+  backButton.innerText = 'Back';
+  backButton.addEventListener('click', getConversations);
+  buttonDiv.appendChild(backButton);
+
+  let refreshButton = document.createElement('button');
+  refreshButton.innerText = 'Refresh';
+  refreshButton.setAttribute('phone', phone);
+  refreshButton.addEventListener('click', fetchConversation);
+  buttonDiv.appendChild(refreshButton);
+
+  let sendButton = document.createElement('button');
+  sendButton.innerText = 'Send';
+  sendButton.setAttribute('phone', phone);
+  sendButton.addEventListener('click', sendMessage);
+  buttonDiv.appendChild(sendButton);
+
+  navBar.appendChild(buttonDiv);
+
+  let textArea = document.createElement('textarea');
+  navBar.appendChild(textArea);
+
+  contentDiv.appendChild(navBar);
+  let result = defaultHandler(event);
+  for (let message of result.responseJson) {
+    let messageDiv = document.createElement('div');
+    messageDiv.classList.add('message');
+    {
+      let p = document.createElement('p');
+      p.innerText = new Date(message.key2 * 1e3).toLocaleString();
+      p.classList.add('date');
+      messageDiv.appendChild(p);
+    }
+    {
+      let p = document.createElement('p');
+      p.innerText = message.from;
+      p.classList.add('from');
+      messageDiv.appendChild(p);
+    }
+    {
+      let p = document.createElement('p');
+      p.innerText = message.message;
+      p.classList.add('text');
+      messageDiv.appendChild(p);
+    }
+    contentDiv.appendChild(messageDiv);
+  }
+}
+function sendMessage(event) {
+
+  let messageText = findParentWithClass(event.target, 'messaging-nav-bar').getElementsByTagName('textarea')[0].value.trim();
+  if (!messageText) {
+    return;
+  }
+
+  phone = event.target.getAttribute('phone');
+  if (!phone) {
+    return;
+  }
+
+  clearContent();
+
+  let url = API_DOMAIN + "/messages/send";
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("POST", url, true); // false for synchronous request
+  xmlHttp.withCredentials = true;
+  xmlHttp.onload = handleSendMessage;
+  xmlHttp.send(JSON.stringify({ csrf: csrfToken, phone: phone, message: messageText }));
+}
+function makeFakeEvent(phoneNumber) {
+  return {
+    target: {
+      getAttribute: (x)=>{return x=='phone'?phoneNumber:undefined;}
+    }
+  }
+}
+function handleSendMessage(event) {
+  let result = defaultHandler(event);
+  fetchConversation(makeFakeEvent(phone));
+}
+function logOutAll(event) {
+  let url = API_DOMAIN + "/logout-all";
+  xmlHttp = new XMLHttpRequest();
+  xmlHttp.open("POST", url, true); // false for synchronous request
+  xmlHttp.withCredentials = true;
+  xmlHttp.onload = logOut;
+  xmlHttp.send(JSON.stringify({ csrf: csrfToken }));
+}
+getConversations();
+// function testIfLoggedIn(event) {
+//   event.preventDefault();
+
+//   let url = API_DOMAIN + "/login-test";
+//   xmlHttp = new XMLHttpRequest();
+//   xmlHttp.open("POST", url, true); // false for synchronous request
+//   xmlHttp.withCredentials = true;
+//   xmlHttp.onload = handle;
+//   xmlHttp.send(JSON.stringify({ csrf: csrfToken }));
+// }
+// function handle(event) {
+//   let xmlHttp = event.target;
+//   if (xmlHttp.status == 200) {
+//     messageDiv.innerText = 'Succeeded, you are logged in';
+//     messageDiv.style.display = 'block';
+//   } else {
+//     messageDiv.innerText = 'Failed, you are not logged in';
+//     messageDiv.style.display = 'block';
+//   }
+// }
+    </script>
+  </body>
+</html>
