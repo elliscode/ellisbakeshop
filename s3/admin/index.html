@@ -55,7 +55,8 @@ function getConversations(event) {
 }
 function handleConversations(event) {
   let result = defaultHandler(event);
-  for (let user of result.responseJson) {
+  let sortedCustomers = result.responseJson.sort(sortCustomers)
+  for (let user of sortedCustomers) {
     let name = user.phone;
     if (user.name) {
       name = user.name;
@@ -67,6 +68,15 @@ function handleConversations(event) {
     button.setAttribute('phone', user.phone);
     button.addEventListener('click', fetchConversation);
     contentDiv.appendChild(button);
+  }
+}
+function sortCustomers(a,b) {
+  if (a.lastMessageTime == b.lastMessageTime) {
+    return 0;
+  } else if (a.lastMessageTime > b.lastMessageTime) {
+    return -1;
+  } else {
+    return 1;
   }
 }
 let phone = undefined;

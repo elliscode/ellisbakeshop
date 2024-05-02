@@ -147,6 +147,8 @@ def get_customers_route(event, user_data, body):
             customer_data['email'] = python_item.get('email')
         if python_item.get('name'):
             customer_data['name'] = python_item.get('name')
+        if python_item.get('last_message_time'):
+            customer_data['lastMessageTime'] = int(python_item.get('last_message_time'))
         phone_list.append(customer_data)
     return format_response(event=event, http_code=200, body=phone_list)
     
