@@ -1,5 +1,7 @@
 import json
 import traceback
+from urllib.parse import parse_qsl
+import datetime
 from botocore.exceptions import ClientError
 from ellisbakeshop.utils import (
     otp_route,
@@ -24,9 +26,12 @@ from ellisbakeshop.utils import (
     os,
     boto3,
 )
+from ellisbakeshop.sms_scheduler import schedule_sms
 
-ADMIN_SENDER_EMAIL = os.environ['ADMIN_SENDER_EMAIL']
-ADMIN_RECIPIENT_EMAIL = os.environ['ADMIN_RECIPIENT_EMAIL']
+ADMIN_SENDER_EMAIL = os.environ["ADMIN_SENDER_EMAIL"]
+ADMIN_RECIPIENT_EMAIL = os.environ["ADMIN_RECIPIENT_EMAIL"]
+REMINDER_LIMIT = 14
+
 
 def lambda_handler(event, context):
     try:
@@ -37,17 +42,17 @@ def lambda_handler(event, context):
     except Exception:
         traceback.print_exc()
         return format_response(event=event, http_code=500, body="Internal server error")
-        
-        
+
+
 def health_route(event):
     return format_response(event=event, http_code=200, body="Healthy")
-    
-    
+
+
 @authenticate
 def login_test_route(event, user_data, body):
     return format_response(event=event, http_code=200, body="You are logged in")
-    
-    
+
+
 def receive_route(event):
     print(event)
 
@@ -74,7 +79,7 @@ def receive_route(event):
     print(f"Received a text message from {from_number}, checking if account exists...")
 
     username = parse_valid_us_phone_number(from_number)
-    
+
     print(username)
 
     msg_text = parsed_body["Body"][0]
@@ -85,7 +90,7 @@ def receive_route(event):
 
     if parse_valid_us_phone_number(ADMIN_PHONE) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
         message = {
-            "phone": ADMIN_PHONE, 
+            "phone": ADMIN_PHONE,
             "message": f"ellisbakeshop.com\nFrom: {username}\nMessage: {msg_text[:116]}",
             "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
         }
@@ -102,32 +107,45 @@ def receive_route(event):
             "Content-Type": "application/xml",
         },
     }
-    
+
 
 def store_communication(parsed_customer_phone, parsed_sender_phone, msg_text, metadata={}):
     response = dynamo.get_item(
         TableName=TABLE_NAME,
         Key=python_obj_to_dynamo_obj({"key1": f"customer", "key2": parsed_customer_phone}),
     )
-    
+
     items = []
     msg_time = int(time.mktime(time.gmtime()))
     if "Item" in response:
         user_data = dynamo_obj_to_python_obj(response["Item"])
     else:
         user_data = {"key1": f"customer", "key2": f"{parsed_customer_phone}"}
-    
+
     user_data["last_message_time"] = msg_time
-    if 'email' in metadata and metadata['email']:
-        user_data["email"] = metadata['email']
-    if 'name' in metadata and metadata['name']:
-        user_data["name"] = metadata['name']
-        
+    if "email" in metadata and metadata["email"]:
+        user_data["email"] = metadata["email"]
+    if "name" in metadata and metadata["name"]:
+        user_data["name"] = metadata["name"]
+
     items.append({"PutRequest": {"Item": python_obj_to_dynamo_obj(user_data)}})
-    items.append({"PutRequest": {"Item": python_obj_to_dynamo_obj({"key1": f"message_{parsed_customer_phone}", "key2": f"{msg_time}", "message": msg_text, 'from': parsed_sender_phone})}})
+    items.append(
+        {
+            "PutRequest": {
+                "Item": python_obj_to_dynamo_obj(
+                    {
+                        "key1": f"message_{parsed_customer_phone}",
+                        "key2": f"{msg_time}",
+                        "message": msg_text,
+                        "from": parsed_sender_phone,
+                    }
+                )
+            }
+        }
+    )
     response = dynamo.batch_write_item(RequestItems={TABLE_NAME: items})
-    
-    
+
+
 @authenticate
 def get_customers_route(event, user_data, body):
     response = dynamo.query(
@@ -142,22 +160,22 @@ def get_customers_route(event, user_data, body):
     phone_list = []
     for item in response.get("Items", []):
         python_item = dynamo_obj_to_python_obj(item)
-        customer_data = {'phone': python_item["key2"]}
-        if python_item.get('email'):
-            customer_data['email'] = python_item.get('email')
-        if python_item.get('name'):
-            customer_data['name'] = python_item.get('name')
-        if python_item.get('last_message_time'):
-            customer_data['lastMessageTime'] = int(python_item.get('last_message_time'))
+        customer_data = {"phone": python_item["key2"]}
+        if python_item.get("email"):
+            customer_data["email"] = python_item.get("email")
+        if python_item.get("name"):
+            customer_data["name"] = python_item.get("name")
+        if python_item.get("last_message_time"):
+            customer_data["lastMessageTime"] = int(python_item.get("last_message_time"))
         phone_list.append(customer_data)
     return format_response(event=event, http_code=200, body=phone_list)
-    
-    
+
+
 @authenticate
 def get_messages_route(event, user_data, body):
-    if 'phone' not in body:
+    if "phone" not in body:
         return format_response(event=event, http_code=400, body="You need to supply a phone number")
-    phone = parse_valid_us_phone_number(body['phone'])
+    phone = parse_valid_us_phone_number(body["phone"])
     if not phone:
         return format_response(event=event, http_code=400, body="You need to supply a valid US phone number")
     output = []
@@ -176,26 +194,26 @@ def get_messages_route(event, user_data, body):
         python_item = dynamo_obj_to_python_obj(item)
         output.append(python_item)
     return format_response(event=event, http_code=200, body=output)
-    
-    
+
+
 @authenticate
 def send_message_route(event, user_data, body):
-    if 'phone' not in body:
+    if "phone" not in body:
         return format_response(event=event, http_code=400, body="You need to supply a phone number")
-    phone = parse_valid_us_phone_number(body['phone'])
+    phone = parse_valid_us_phone_number(body["phone"])
     if not phone:
         return format_response(event=event, http_code=400, body="You need to supply a valid US phone number")
-    if 'message' not in body or not body['message']:
+    if "message" not in body or not body["message"]:
         return format_response(event=event, http_code=400, body="You need to supply a message to send")
-        
+
     username = phone
-    msg_text = body['message']
-    
+    msg_text = body["message"]
+
     store_communication(username, parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM), msg_text)
 
     if parse_valid_us_phone_number(username) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
         message = {
-            "phone": username, 
+            "phone": username,
             "message": f"{msg_text}",
             "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
         }
@@ -204,52 +222,78 @@ def send_message_route(event, user_data, body):
             QueueUrl=SMS_SQS_QUEUE_URL,
             MessageBody=json.dumps(message),
         )
-    
+
     return format_response(event=event, http_code=200, body="Sent the message to the user")
-    
+
 
 def parse_valid_us_phone_number(phone):
-    stripped_number = re.sub('[^\d]+', '', phone)
-    if stripped_number.startswith('1'):
+    stripped_number = re.sub("[^\d]+", "", phone)
+    if stripped_number.startswith("1"):
         stripped_number = stripped_number[1:]
     if len(stripped_number) == 10:
         return stripped_number
     return None
-    
+
 
 def order_route(event):
     print(json.dumps(event))
-    if event['httpMethod'] != 'POST' or not 'origin' in event['headers'] or not event['headers']['origin'].startswith('https://www.ellisbakeshop.com'):
+    if (
+        event["httpMethod"] != "POST"
+        or not "origin" in event["headers"]
+        or not event["headers"]["origin"].startswith("https://www.ellisbakeshop.com")
+    ):
         return {
             "statusCode": 403,
             "body": "Forbidden",
             "headers": {
                 "Access-Control-Allow-Origin": "*",
-            }
+            },
         }
-        
-    body = parse_body(event['body'])
-    name = body['name']
-    phone = body['tel']
-    email = body['email']
-    date = body['date']
-    order = body['order']
-    
+
+    body = parse_body(event["body"])
+    name = body["name"]
+    phone = body["tel"]
+    email = body["email"]
+    date = body["date"]
+    order = body["order"]
+
+    parsed_date = parse_sent_date(date)
+
     email_text = send_email(name, phone, email, date, order)
     send_text(name, phone, email, date, order)
     parsed_phone = parse_valid_us_phone_number(phone)
-    if parsed_phone:
+    if parsed_phone and parsed_date:
         send_confirmation_text(parsed_phone)
-        store_communication(parsed_phone, parsed_phone, email_text, {'name': name, 'email': email})
-    
+        schedule_reminders(event, parsed_date)
+        store_communication(parsed_phone, parsed_phone, email_text, {"name": name, "email": email})
+
+        return {
+            "statusCode": 200,
+            "body": "Successfully submitted order",
+            "headers": {
+                "Access-Control-Allow-Origin": "https://www.ellisbakeshop.com",
+            },
+        }
+
     return {
-        "statusCode": 200,
-        "body": "Successfully submitted order",
+        "statusCode": 206,
+        "body": "Partially submitted order",
         "headers": {
             "Access-Control-Allow-Origin": "https://www.ellisbakeshop.com",
-        }
+        },
     }
-    
+
+
+def parse_sent_date(date):
+    output = None
+    try:
+        output = datetime.datetime.strptime(f"{date}T10:00:00", "%Y-%m-%dT%H:%M:%S")
+    except:
+        print(f"Invalid date passed {date}")
+        pass
+    return output
+
+
 def parse_body(body):
     if isinstance(body, dict):
         return body
@@ -257,7 +301,7 @@ def parse_body(body):
         return json.loads(body)
     else:
         return dict(parse_qsl(body))
-        
+
 
 def send_text(name, phone, email, date, order):
     if parse_valid_us_phone_number(ADMIN_PHONE) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
@@ -267,12 +311,9 @@ def send_text(name, phone, email, date, order):
             "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
         }
         print(message)
-        sqs.send_message(
-            QueueUrl=SMS_SQS_QUEUE_URL,
-            MessageBody=json.dumps(message)
-        )
-    
-    
+        sqs.send_message(QueueUrl=SMS_SQS_QUEUE_URL, MessageBody=json.dumps(message))
+
+
 def send_confirmation_text(phone):
     if parse_valid_us_phone_number(phone) != parse_valid_us_phone_number(TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM):
         message = {
@@ -281,15 +322,12 @@ def send_confirmation_text(phone):
             "sender": TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM,
         }
         print(message)
-        sqs.send_message(
-            QueueUrl=SMS_SQS_QUEUE_URL,
-            MessageBody=json.dumps(message)
-        )
+        sqs.send_message(QueueUrl=SMS_SQS_QUEUE_URL, MessageBody=json.dumps(message))
 
 
 def send_email(name, phone, email, date, order):
-    SENDER = ADMIN_SENDER_EMAIL # must be verified in AWS SES Email
-    RECIPIENT = ADMIN_RECIPIENT_EMAIL # must be verified in AWS SES Email
+    SENDER = ADMIN_SENDER_EMAIL  # must be verified in AWS SES Email
+    RECIPIENT = ADMIN_RECIPIENT_EMAIL  # must be verified in AWS SES Email
 
     # If necessary, replace us-west-2 with the AWS Region you're using for Amazon SES.
     AWS_REGION = "us-east-1"
@@ -306,7 +344,7 @@ Thanks for placing your order with ellisbakeshop.com, here is a summary:
 - {date}
 - {order}
 """
-                
+
     # The HTML body of the email.
     BODY_HTML = f"""<html>
     <head></head>
@@ -328,41 +366,53 @@ Thanks for placing your order with ellisbakeshop.com, here is a summary:
     CHARSET = "UTF-8"
 
     # Create a new SES resource and specify a region.
-    client = boto3.client('ses',region_name=AWS_REGION)
+    client = boto3.client("ses", region_name=AWS_REGION)
 
     # Try to send the email.
     try:
-        #Provide the contents of the email.
+        # Provide the contents of the email.
         response = client.send_email(
             Destination={
-                'ToAddresses': [
+                "ToAddresses": [
                     RECIPIENT,
                 ],
             },
             Message={
-                'Body': {
-                    'Html': {
-                        'Data': BODY_HTML
-                    },
-                    'Text': {
-                        'Data': BODY_TEXT
-                    },
+                "Body": {
+                    "Html": {"Data": BODY_HTML},
+                    "Text": {"Data": BODY_TEXT},
                 },
-                'Subject': {
-                    'Data': SUBJECT
-                },
+                "Subject": {"Data": SUBJECT},
             },
-            Source=SENDER
+            Source=SENDER,
         )
-    # Display an error if something goes wrong.	
+    # Display an error if something goes wrong.
     except ClientError as e:
-        print(e.response['Error']['Message'])
+        print(e.response["Error"]["Message"])
     else:
         print("Email sent! Message ID:"),
-        print(response['MessageId'])
-        
+        print(response["MessageId"])
+
     return BODY_TEXT
 
+
+def schedule_reminders(event, parsed_date):
+    schedule_sms(
+        event,
+        parsed_date.strftime("%Y-%m-%dT%H:%M:%S"),
+        "You have an ellisbakeshop order due today\n\nhttps://www.ellisbakeshop.com/admin",
+    )
+    reminder_date = parsed_date - datetime.timedelta(hours=14)
+    current_time = datetime.datetime.now()
+    count = 0
+    while reminder_date > current_time and count < REMINDER_LIMIT:
+        schedule_sms(
+            event,
+            reminder_date.strftime("%Y-%m-%dT%H:%M:%S"),
+            f"You have an ellisbakeshop order due on {parsed_date.strftime("%Y-%m-%d")}\n\nhttps://www.ellisbakeshop.com/admin",
+        )
+        reminder_date = reminder_date - datetime.timedelta(days=1)
+        count = count + 1
 
 
 # Only using POST because I want to prevent CORS preflight checks, and setting a

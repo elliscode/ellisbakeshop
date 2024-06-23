@@ -1,36 +1,36 @@
-import os
 import json
-import time
-import boto3
+import os
 import re
 import secrets
+import time
 import urllib
+
+import boto3
 from boto3.dynamodb.types import TypeDeserializer, TypeSerializer
 
-ADMIN_PHONE = os.environ["ADMIN_PHONE"]
-DOMAIN_NAME = os.environ["DOMAIN_NAME"]
-DOMAIN_NAME_WWW = os.environ["DOMAIN_NAME_WWW"]
-TABLE_NAME = os.environ["DYNAMODB_TABLE_NAME"]
-SMS_SQS_QUEUE_URL = os.environ["SMS_SQS_QUEUE_URL"]
-TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM = os.environ['TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM']
+ADMIN_PHONE = os.environ.get("ADMIN_PHONE")
+DOMAIN_NAME = os.environ.get("DOMAIN_NAME")
+DOMAIN_NAME_WWW = os.environ.get("DOMAIN_NAME_WWW")
+TABLE_NAME = os.environ.get("DYNAMODB_TABLE_NAME")
+SMS_SQS_QUEUE_URL = os.environ.get("SMS_SQS_QUEUE_URL")
+SMS_SQS_QUEUE_ARN = os.environ.get("SMS_SQS_QUEUE_ARN")
+SMS_SCHEDULER_ROLE_ARN = os.environ.get("SMS_SCHEDULER_ROLE_ARN")
+TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM = os.environ.get("TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM")
 
 digits = "0123456789"
 lowercase_letters = "abcdefghijklmnopqrstuvwxyz"
 uppercase_letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 dynamo = boto3.client("dynamodb")
 sqs = boto3.client("sqs")
+scheduler = boto3.client("scheduler")
 
 
 def format_response(event, http_code, body, headers=None):
     if isinstance(body, str):
         body = {"message": body}
-    if "origin" in event["headers"] and event["headers"]["origin"].startswith(
-        DOMAIN_NAME_WWW
-    ):
+    if "origin" in event["headers"] and event["headers"]["origin"].startswith(DOMAIN_NAME_WWW):
         domain_name = DOMAIN_NAME_WWW
-    elif "origin" in event["headers"] and event["headers"]["origin"].startswith(
-        DOMAIN_NAME
-    ):
+    elif "origin" in event["headers"] and event["headers"]["origin"].startswith(DOMAIN_NAME):
         domain_name = DOMAIN_NAME
     else:
         print(f'Invalid origin {event["headers"].get("origin")}')
@@ -114,9 +114,7 @@ def get_user_data(username):
 def path_equals(event, method, path):
     event_path = event["path"]
     event_method = event["httpMethod"]
-    return event_method == method and (
-        event_path == path or event_path == path + "/" or path == "*"
-    )
+    return event_method == method and (event_path == path or event_path == path + "/" or path == "*")
 
 
 def path_starts_with(event, method, path):
@@ -129,9 +127,7 @@ def authenticate(func):
     def wrapper_func(*args, **kwargs):
         event = args[0]
         if "cookie" not in event["headers"]:
-            return format_response(
-                event=event, http_code=403, body="No active session, please log in"
-            )
+            return format_response(event=event, http_code=403, body="No active session, please log in")
         cookie_string = event["headers"]["cookie"]
         cookie = parse_cookie(cookie_string)
         body = parse_body(event["body"])
@@ -143,8 +139,8 @@ def authenticate(func):
                 http_code=403,
                 body="Your session has expired, please log in",
             )
-        active_tokens = get_active_tokens(token_data['user'])
-        if token_data['key2'] not in active_tokens['tokens'].keys():
+        active_tokens = get_active_tokens(token_data["user"])
+        if token_data["key2"] not in active_tokens["tokens"].keys():
             return format_response(
                 event=event,
                 http_code=403,
@@ -165,8 +161,8 @@ def authenticate(func):
 
 @authenticate
 def clear_all_tokens_route(event, user_data, body):
-    active_tokens = get_active_tokens(user_data['key2'])
-    active_tokens['tokens'] = {}
+    active_tokens = get_active_tokens(user_data["key2"])
+    active_tokens["tokens"] = {}
     dynamo.put_item(
         TableName=TABLE_NAME,
         Item=python_obj_to_dynamo_obj(active_tokens),
@@ -184,9 +180,7 @@ def ios_cookie_refresh_route(event, user_data, body):
     cookie = parse_cookie(cookie_string)
     token_data = get_token(cookie)
     # generate the date_string
-    date_string = time.strftime(
-        "%a, %d %b %Y %H:%M:%S GMT", time.gmtime(float(token_data["expiration"]))
-    )
+    date_string = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(float(token_data["expiration"])))
     return format_response(
         event=event,
         http_code=200,
@@ -229,9 +223,7 @@ def login_route(event):
     if submitted_otp != otp_data["otp"]:
         otp_data["last_failure"] = int(time.time())
         set_otp(phone, otp_data)
-        return format_response(
-            event=event, http_code=403, body="Incorrect OTP, please try again"
-        )
+        return format_response(event=event, http_code=403, body="Incorrect OTP, please try again")
 
     # delete the OTP
     delete_otp(phone)
@@ -241,9 +233,7 @@ def login_route(event):
     track_token(token_data)
 
     # generate the date_string
-    date_string = time.strftime(
-        "%a, %d %b %Y %H:%M:%S GMT", time.gmtime(time.time() + (4 * 30 * 24 * 60 * 60))
-    )
+    date_string = time.strftime("%a, %d %b %Y %H:%M:%S GMT", time.gmtime(time.time() + (4 * 30 * 24 * 60 * 60)))
 
     return format_response(
         event=event,
@@ -271,7 +261,9 @@ def otp_route(event):
     user_data = get_user_data(phone)
     if user_data is None:
         alert_admin_of_attempted_login(phone)
-        return format_response(event=event, http_code=500, body="No user found, this incident has been reported to the owner")
+        return format_response(
+            event=event, http_code=500, body="No user found, this incident has been reported to the owner"
+        )
     print(user_data)
 
     # generate and set OTP
@@ -307,7 +299,7 @@ def alert_admin_of_attempted_login(phone):
     )
     if "Item" in warning_response:
         warning_dict = dynamo_obj_to_python_obj(warning_response["Item"])
-        if warning_dict['expiration'] > int(time.time()):
+        if warning_dict["expiration"] > int(time.time()):
             return
     message = {
         "phone": ADMIN_PHONE,
@@ -348,7 +340,7 @@ def create_token(phone):
 
 def track_token(token_data):
     active_tokens = get_active_tokens(token_data["user"])
-    token_id = token_data['key2']
+    token_id = token_data["key2"]
     active_tokens["tokens"][token_id] = token_data["expiration"]
     dynamo.put_item(
         TableName=TABLE_NAME,
@@ -426,10 +418,7 @@ def create_user_data(phone):
 
 
 def create_id(length):
-    return "".join(
-        secrets.choice(digits + lowercase_letters + uppercase_letters)
-        for i in range(length)
-    )
+    return "".join(secrets.choice(digits + lowercase_letters + uppercase_letters) for i in range(length))
 
 
 def generate_query_parameters(params):
@@ -437,11 +426,15 @@ def generate_query_parameters(params):
     separator = "?"
     for key in params:
         value = params[key]
-        output += (
-            separator
-            + urllib.parse.quote(str(key))
-            + "="
-            + urllib.parse.quote(str(value))
-        )
+        output += separator + urllib.parse.quote(str(key)) + "=" + urllib.parse.quote(str(value))
         separator = "&"
     return output
+
+
+@authenticate
+def logged_in_check_route(event, user_data, body):
+    return format_response(
+        event=event,
+        http_code=200,
+        body="You are logged in",
+    )
