@@ -37,8 +37,9 @@ def schedule_sms(event, time_to_send, message_text):
         "message": message_text,
     }
     message_to_send = json.dumps(message_dict)
-    schedule_name = f"schedule_{ADMIN_PHONE}_{re.sub(r'[^a-z0-9]','_', time_to_send)}"
-    group_name = f"schedule_group_{ADMIN_PHONE}"
+    schedule_name = f"ellisbakeshop_schedule_{re.sub(r'[^a-z0-9]','_', time_to_send)}"
+    group_name = f"ellisbakeshop_schedule_group"
+    response = {}
     try:
         response = scheduler.get_schedule_group(Name=group_name)
     except Exception as e:
@@ -52,6 +53,7 @@ def schedule_sms(event, time_to_send, message_text):
             GroupName=group_name,
             Name=schedule_name,
             ScheduleExpression=f"at({time_to_send})",
+            ScheduleExpressionTimezone="America/New_York",
             State="ENABLED",
             Target={
                 "Arn": SMS_SQS_QUEUE_ARN,
@@ -68,5 +70,5 @@ def schedule_sms(event, time_to_send, message_text):
     return format_response(
         event=event,
         http_code=200,
-        body=f"Scheduled a message for {time_to_send} {response['ScheduleArn']}",
+        body=f"Scheduled a message for {time_to_send}",
     )
