@@ -227,7 +227,7 @@ def send_message_route(event, user_data, body):
 
 
 def parse_valid_us_phone_number(phone):
-    stripped_number = re.sub("[^\d]+", "", phone)
+    stripped_number = re.sub(r"[^\d]+", "", phone)
     if stripped_number.startswith("1"):
         stripped_number = stripped_number[1:]
     if len(stripped_number) == 10:
@@ -403,7 +403,7 @@ def schedule_reminders(event, parsed_date):
         "You have an ellisbakeshop order due today\n\nhttps://www.ellisbakeshop.com/admin",
     )
     reminder_date = parsed_date - datetime.timedelta(hours=14)
-    current_time = datetime.datetime.now()
+    current_time = datetime.datetime.now() - datetime.timedelta(hours=4)
     count = 0
     while reminder_date > current_time and count < REMINDER_LIMIT:
         schedule_sms(
