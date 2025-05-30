@@ -4,177 +4,238 @@
 <head>
     <meta charset="utf-8">
     <title>Ellis Bake Shop</title>
-    <meta name="description" content="">
-    <meta name="author" content="elliscode.com">
+    <meta name="description" content="Order your macarons today! Local pickup only!">
+    <meta name="author" content="Daniel Ellis Townsend">
     <meta name="viewport" content="width=device-width">
     <link rel="shortcut icon" type="image/jpg" href="favicon.png"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/normalize.css?v=001">
-    <link rel="stylesheet" href="css/skeleton.css?v=001">
-    <link rel="stylesheet" href="css/stylesheet.css?v=001">
-    <link rel="stylesheet" href="css/list.css?v=001">
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.gstatic.com/s/kameron/v16/vm82dR7vXErQxuzngLk6LsfLcH4.woff2" as="font" type="font/woff" crossorigin="anonymous">
+    <style>
+#navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: space-evenly;
+  font-size: 20px;
+}
+#navbar ul li {
+  margin: 0;
+  padding: 15px;
+  box-sizing: border-box;
+  border-bottom: 2px solid #ffffff00;
+}
+#navbar ul li:hover {
+  border-bottom: 2px solid #4a4a4a;
+}
+#navbar ul li a {
+    color: #4a4a4a;
+    text-decoration: none;
+}
+#navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fdf0fb;
+}
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 70px;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family: Kameron;
+    background-color: white;/*#fdf0fb;*/
+    padding-bottom: calc(100vh - 30px);
+}
+@keyframes animatedBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 100% 0;
+  }
+}
+div#header {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAABCAYAAAAo2wu9AAABg2lDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9bS0WqDnYoIpKhOtlFRRxrFYpQIdQKrTqYXPoFTRqSFBdHwbXg4Mdi1cHFWVcHV0EQ/ABxF5wUXaTE/yWFFjEeHPfj3b3H3TvA36wy1exJAKpmGZlUUsjlV4XQK4IYxQBCiErM1OdEMQ3P8XUPH1/v4jzL+9yfo18pmAzwCcQJphsW8QbxzKalc94njrCypBCfE08YdEHiR67LLr9xLjns55kRI5uZJ44QC6UulruYlQ2VeJo4pqga5ftzLiuctzir1Tpr35O/MFzQVpa5TnMEKSxiCSIEyKijgiosxGnVSDGRof2kh3/Y8YvkkslVASPHAmpQITl+8D/43a1ZnJp0k8JJIPhi2x9jQGgXaDVs+/vYtlsnQOAZuNI6/loTmP0kvdHRYkfA4DZwcd3R5D3gcgeIPumSITlSgKa/WATez+ib8sDQLdC35vbW3sfpA5ClrtI3wMEhMF6i7HWPd/d29/bvmXZ/P2hkcqLYZ48KAAAABmJLR0QA/gDNAObeWRcdAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH6QUeDhQPMTao+AAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAXSURBVBjTY/x39tl/hmEAGAUFh4M3GADb/APVGW5ZewAAAABJRU5ErkJggg==');
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    animation: animatedBackground 200s linear infinite alternate;
+    /* box-shadow: 0px 0px 8px; */
+}
+div#header h1 {
+    margin:0px;
+    color: white;
+    -webkit-text-stroke: 1px #4a4a4a;
+    font-weight: 700;
+    text-align:center;
+}
+section {
+    min-height: 100vh;
+}
+h2 {
+    color: #4a4a4a;
+    font-weight: 600;
+    text-align:center;
+}
+h3 {
+    color: #4a4a4a;
+    text-align:center;
+    margin: 5px;
+}
+.card-box {
+    display:flex;
+    flex-wrap: wrap;
+}
+.image {
+    margin-left: 5px;
+    background-size: auto 100%;
+    border-radius: 30px;
+}
+.chocolate {
+    background-image: url('img/chocolate.jpg');
+}
+.pink {
+    background-image: url('img/pink.jpg');
+}
+.white {
+    background-image: url('img/white.jpg');
+}
+@media only screen and (max-width: 400px) {
+    div#header {
+        width: 100%;
+        height: 100px;
+    }
+    div#header h1 { 
+        font-size: 40px;
+        text-shadow: -1px 1px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 30px;
+    }
+    .card {
+        width:calc(100vw / 1);
+    }
+    .image {
+        width:calc((100vw / 1) - 10px);
+        height:calc((100vw / 1) - 10px);
+    }
+}
+
+@media only screen and (min-width: 400px) and (max-width: 767px) {
+    div#header {
+        width: 100%;
+        height: 200px;
+    }
+    div#header h1 { 
+        font-size: 55px;
+        text-shadow: -2px 2px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 35px;
+    }
+    .card {
+        width:calc(100vw / 2);
+    }
+    .image {
+        width:calc((100vw / 2) - 10px);
+        height:calc((100vw / 2) - 10px);
+    }
+}
+
+@media only screen and (min-width: 768px) {
+    div#header {
+        width: 100%;
+        height: 300px;
+    }
+    div#header h1 { 
+        font-size: 90px;
+        text-shadow: -3px 3px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 40px;
+    }
+    h3 {
+        font-size: 30px;
+    }
+    .card {
+        width:calc(100vw / 3);
+    }
+    .image {
+        width:calc((100vw / 3) - 10px);
+        height:calc((100vw / 3) - 10px);
+    }
+}
+    </style>
 </head>
 
 <body>
-<div id="header">
-    <h1>Ellis Bake Shop</h1>
-</div>
-
-<a href="https://instagram.com/ellisbakeshop" id="insta"><img src="insta.png"
-                                                              alt="Instagram Account for ellisbakeshop.com"/></a>
-<div id="main" class="container">
-    <div class="row">
-        <div class="column">
-            <div class="cell blob">
-                <h2>Menu</h2>
-            </div>
-        </div>
+    <div id="header">
+        <h1>Ellis Bake Shop</h1>
     </div>
-    <div class="row">
-        <div class="twelve columns">
-            <div class="cell blob">
-                <h3>Pies</h3>
-
-                <ul>
-                    <li><span>Pumpkin</span><span></span><span>$15</span></li>
-                    <li><span>Sweet Potato</span><span></span><span>$15</span></li>
-                    <li><span>Apple</span><span></span><span>$15</span></li>
-                    <li><span>Peach</span><span></span><span>$15</span></li>
-                    <li><span>Pecan</span><span></span><span>$20</span></li>
-                    <li><span>Strawberry Rhubarb</span><span></span><span>$20</span></li>
-                    <li><span>Cherry</span><span></span><span>$25</span></li>
-                    <li><span>Triple Berry</span><span></span><span>$25</span></li>
-                </ul>
-                <p style="text-align:center;">All pies available based on seasonal ingredient availability</p>
-            </div>
-        </div>
-        <div class="twelve columns">
-            <div class="cell blob">
-                <h3>Macarons</h3>
-                <ul>
-                    <li><span>1 order (25 cookies)</span><span></span><span>$25</span></li>
-                    <li><span>Multi-color shells</span><span></span><span>&plus;$5 per additional color</span></li>
-                    <li><span>Toppings</span><span></span><span>&plus;$5 per topping</span></li>
-                </ul>
-                <h3>Flavors</h3>
-                <ul class="inline">
-                    <li>Chocolate</li>
-                    <li>Vanilla</li>
-                    <li>Oreo</li>
-                    <li>Nutella</li>
-                    <li>Cinnamon</li>
-                    <li>Coconut</li>
-                    <li>Lemon</li>
-                    <li>Peanut Butter</li>
-                    <li>Brown Sugar</li>
-                    <li>Strawberry</li>
-                    <li>Raspberry</li>
-                    <li>Blueberry</li>
-                    <li>Kiwi</li>
-                    <li>Peach</li>
-                    <li>Candy Cane</li>
-                    <li>Candied Walnut</li>
-                    <li>Candied Pecan</li>
-                    <li>Matcha</li>
-                    <li>Espresso</li>
-                </ul>
-
-                <h3>Toppings</h3>
-                <ul class="inline">
-                    <li>Chocolate drizzle</li>
-                </ul>
-
-            </div>
-
-        </div>
+    <div id="navbar">
+        <ul>
+            <li><a href="#macarons">Macarons</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#order">Order</a></li>
+        </ul>
     </div>
-    <div class="row">
-        <div class="column">
-            <div class="cell blob">
-                <h2>Order Form</h2>
-                <form id="orderform" onsubmit="submitForm(event)" method="post" style="margin-bottom:0px;">
-                    <div class="row">
-                        <div class="six columns">
-                            <label for="name">Your Name:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="text" id="name" name="name"
-                                   placeholder="Firstname Lastname" required/>
-                        </div>
-                        <div class="six columns">
-                            <label for="email">Your Email:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="email" id="email" name="email"
-                                   placeholder="youremail@website.com" required autocomplete="email"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="six columns">
-                            <label for="tel">Phone Number:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="tel" id="tel" name="tel"
-                                   placeholder="(XXX) XXX-XXXX" required/>
-                        </div>
-                        <div class="six columns">
-                            <label for="date">Pickup Date:</label>
-                            <input class="u-full-width" style="height:38px; margin-bottom:10px;" type="date" id="date"
-                                   name="date" required/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="twelve columns">
-                            <label for="order">Your Order:</label>
-                            <textarea class="u-full-width" style="height:200px;margin-bottom:0px;" id="order"
-                                      name="order"
-                                      placeholder="Please include a list of the items you would like to order, any special requests, and any other information you would like me to know"
-                                      required></textarea>
-                        </div>
-                    </div>
-                    <button id="submit-button" type="submit">Place your Order</button>
-                </form>
+    <section>
+        <h2 id="macarons">Macarons</h2>
+        <div class="card-box">
+            <div class="card">
+                <div class="image chocolate"></div>
+                <h3>Chocolate</h3>
+            </div><div class="card">
+                <div class="image pink"></div>
+                <h3>Strawberry</h3>
+            </div><div class="card">
+                <div class="image white"></div>
+                <h3>Vanilla</h3>
+            </div>
+            <div class="card">
+                <div class="image chocolate"></div>
+                <h3>Chocolate</h3>
+            </div><div class="card">
+                <div class="image pink"></div>
+                <h3>Strawberry</h3>
+            </div><div class="card">
+                <div class="image white"></div>
+                <h3>Vanilla</h3>
+            </div>
+            <div class="card">
+                <div class="image chocolate"></div>
+                <h3>Chocolate</h3>
+            </div><div class="card">
+                <div class="image pink"></div>
+                <h3>Strawberry</h3>
+            </div><div class="card">
+                <div class="image white"></div>
+                <h3>Vanilla</h3>
+            </div>
+            <div class="card">
+                <div class="image chocolate"></div>
+                <h3>Chocolate</h3>
+            </div><div class="card">
+                <div class="image pink"></div>
+                <h3>Strawberry</h3>
+            </div><div class="card">
+                <div class="image white"></div>
+                <h3>Vanilla</h3>
             </div>
         </div>
-    </div>
-</div>
-<script>
-    const button = document.getElementById('submit-button');
-    function submitForm(event) {
-        // stops the POST call
-        event.preventDefault();
+    </section>
+    <section>
+    <h2 id="about">About</h2>
+    </section>
+    <section>
+    <h2 id="order">Order</h2>
+    </section>
 
-        // disables all of the user input
-        button.setAttribute('disabled','');
-        button.style.backgroundColor='#7c7c7cb8';
-        button.innerText = "Submitting order...";
-        let items = Array.from(event.target.querySelectorAll('input,textarea'));
-        items.forEach(x => x.setAttribute('readonly',''));
-
-        // name, email, tel, date, order
-        let url = 'https://api.ellisbakeshop.com/submitorder';
-        let xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST", url, true);
-        xmlHttp.onload = handle;
-        xmlHttp.send(JSON.stringify({
-            'name': getFieldValue('name'),
-            'email': getFieldValue('email'),
-            'tel': getFieldValue('tel'),
-            'date': getFieldValue('date'),
-            'order': getFieldValue('order'),
-        }));
-    }
-    function handle(event) {
-        let xmlHttp = event.target;
-        if (xmlHttp.status != 200) {
-            button.innerText = "Error submitting order!";
-        } else {
-            button.innerText = "Order submitted!";
-            button.style.backgroundColor = '#01ad16b8';
-            button.style.color = '#000';
-        }
-    }
-    function getFieldValue(elementId) {
-        const element = document.getElementById(elementId);
-        return element.value;
-    }
-</script>
 </body>
 
 </html>
