@@ -8,7 +8,7 @@
     <meta name="author" content="Daniel Ellis Townsend">
     <meta name="viewport" content="width=device-width">
     <meta name="theme-color" content="#fdf0fb">
-    <link rel="shortcut icon" type="image/jpg" href="favicon.png"/>
+    <link rel="shortcut icon" type="image/jpg" href="favicon.svg"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400..700&display=swap" rel="stylesheet">
@@ -37,7 +37,7 @@
     }
     .bio-pic {
         display:block;
-        background-image: url('img/ellis.png');
+        background-image: url('img/ellis.png?v=001');
         background-size: auto 100%;
         width:160px;
         min-width:160px;
@@ -55,8 +55,8 @@
     .image {
         width:calc((100vw / 1) - 10px);
         max-width:calc(230px - 10px);
-        height:calc((100vw / 1) - 10px);
-        max-height:calc(160px - 10px);
+        height:calc((100vw / 1.5) - 10px);
+        max-height:calc(153px - 10px);
     }
     #navbar ul {
         display: flex;
@@ -109,7 +109,32 @@
         width: 100%;
         box-sizing: border-box;
         font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
+    }
+}
+@media only screen and (min-width: 251px) and (max-width: 270px) {
+    div#header h1 { 
+        font-size: 32px;
+    }
+}
+@media only screen and (min-width: 271px) and (max-width: 290px) {
+    div#header h1 { 
+        font-size: 34px;
+    }
+}
+@media only screen and (min-width: 291px) and (max-width: 320px) {
+    div#header h1 { 
+        font-size: 36px;
+    }
+}
+@media only screen and (min-width: 321px) and (max-width: 350px) {
+    div#header h1 { 
+        font-size: 38px;
+    }
+}
+@media only screen and (min-width: 351px) and (max-width: 500px) {
+    div#header h1 { 
+        font-size: 40px;
     }
 }
 @media only screen and (min-width: 251px) and (max-width: 500px) {
@@ -120,8 +145,7 @@
         width: 100%;
         height: 100px;
     }
-    div#header h1 { 
-        font-size: 40px;
+    div#header h1 {
         text-shadow: -1px 1px 0px #4a4a4a;
     }
     h2 {
@@ -135,7 +159,7 @@
     }
     .bio-pic {
         display:block;
-        background-image: url('img/ellis.png');
+        background-image: url('img/ellis.png?v=001');
         background-size: auto 100%;
         width:200px;
         min-width:200px;
@@ -153,8 +177,8 @@
     .image {
         width:calc((100vw / 1) - 10px);
         max-width:calc(300px - 10px);
-        height:calc((100vw / 1) - 10px);
-        max-height:calc(300px - 10px);
+        height:calc((100vw / 1.5) - 10px);
+        max-height:calc(200px - 10px);
     }
     #navbar ul {
         display: flex;
@@ -207,7 +231,7 @@
         width: 100%;
         box-sizing: border-box;
         font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 }
 @media only screen and (min-width: 501px)and (max-width: 850px) {
@@ -222,7 +246,7 @@
     }
     .bio-pic {
         display:block;
-        background-image: url('img/ellis.png');
+        background-image: url('img/ellis.png?v=001');
         background-size: auto 100%;
         width:300px;
         min-width:300px;
@@ -246,7 +270,7 @@
     }
     .bio-pic {
         display:block;
-        background-image: url('img/ellis.png');
+        background-image: url('img/ellis.png?v=001');
         background-size: auto 100%;
         width:300px;
         min-width:300px;
@@ -280,8 +304,8 @@
     .image {
         width:calc((100vw / 2) - 10px);
         max-width:calc(300px - 10px);
-        height:calc((100vw / 2) - 10px);
-        max-height:calc(300px - 10px);
+        height:calc((100vw / 3) - 10px);
+        max-height:calc(200px - 10px);
     }
     #navbar ul {
         display: flex;
@@ -337,7 +361,7 @@
         width: 100%;
         box-sizing: border-box;
         font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        margin-bottom: 10px;
+        margin-bottom: 20px;
     }
 }
 
@@ -370,7 +394,7 @@
     }
     .bio-pic {
         display:block;
-        background-image: url('img/ellis.png');
+        background-image: url('img/ellis.png?v=001');
         background-size: auto 100%;
         width:400px;
         min-width:400px;
@@ -388,8 +412,8 @@
     .image {
         width:calc((100vw / 3) - 10px);
         max-width:calc(300px - 10px);
-        height:calc((100vw / 3) - 10px);
-        max-height:calc(300px - 10px);
+        height:calc((100vw / 4.5) - 10px);
+        max-height:calc(200px - 10px);
     }
     #navbar ul {
         display: flex;
@@ -543,25 +567,74 @@ h3 {
     flex-wrap: wrap;
     justify-content: center;
 }
-.image {
-    margin-left: 5px;
-    background-size: auto 100%;
-    background-repeat: no-repeat;
-    background-position: center;
-    border-radius: 30px;
-}
-.chocolate {
-    background-image: url('img/chocolate.jpg');
-}
-.pink {
-    background-image: url('img/pink.jpg');
-}
-.white {
-    background-image: url('img/white.jpg');
-}
 form div {
     display:flex;
     flex-direction: column;
+}
+.image {
+    margin-left: 5px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 30px;
+    border: 2px solid #f6cfe5;
+    box-sizing:border-box;
+}
+.horiz {
+    background-size: auto 100%;
+}
+.vert {
+    background-size: 100% auto;
+}
+.chocolate {
+    background-image: url('img/chocolate.png?v=001');
+}
+.matcha {
+    background-image: url('img/matcha.png?v=001');
+}
+.oreo {
+    background-image: url('img/oreo.png?v=001');
+}
+.candy-cane {
+    background-image: url('img/candy-cane.png?v=001');
+}
+.brown-sugar {
+    background-image: url('img/brown-sugar.png?v=001');
+}
+.candied-pecan {
+    background-image: url('img/candied-pecan.png?v=001');
+}
+.cinnamon {
+    background-image: url('img/cinnamon.png?v=001');
+}
+.kiwi {
+    background-image: url('img/kiwi.png?v=001');
+}
+.nutella {
+    background-image: url('img/nutella.png?v=001');
+}
+.ube {
+    background-image: url('img/ube.png?v=001');
+}
+.espresso {
+    background-image: url('img/espresso.png?v=001');
+}
+.peach {
+    background-image: url('img/peach.png?v=001');
+}
+.lemon {
+    background-image: url('img/lemon.png?v=001');
+}
+.blueberry {
+    background-image: url('img/blueberry.png?v=001');
+}
+.strawberry {
+    background-image: url('img/strawberry.png?v=001');
+}
+.vanilla {
+    background-image: url('img/vanilla.png?v=001');
+}
+.raspberry {
+    background-image: url('img/raspberry.png?v=001');
 }
     </style>
 </head>
@@ -575,51 +648,63 @@ form div {
         <ul class="hidden">
             <a onclick="hideBurgerMenu(event);" href="#macarons"><li>Macarons</li></a>
             <a onclick="hideBurgerMenu(event);" href="#about"><li>About</li></a>
-            <a onclick="hideBurgerMenu(event);" href="#order"><li>Order</li></a>
+            <a onclick="hideBurgerMenu(event);" href="#order-page"><li>Order</li></a>
         </ul>
     </div>
     <section>
         <h2 id="macarons">Macarons</h2>
         <div class="card-box">
             <div class="card">
-                <div class="image chocolate"></div>
-                <h3>Chocolate</h3>
+                <div class="image vert raspberry"></div>
+                <h3>Raspberry</h3>
             </div><div class="card">
-                <div class="image pink"></div>
+                <div class="image vert lemon"></div>
+                <h3>Lemon</h3>
+            </div><div class="card">
+                <div class="image vert vanilla"></div>
+                <h3>Vanilla</h3>
+            </div><div class="card">
+                <div class="image vert blueberry"></div>
+                <h3>Blueberry</h3>
+            </div><div class="card">
+                <div class="image vert peach"></div>
+                <h3>Peach</h3>
+            </div><div class="card">
+                <div class="image vert strawberry"></div>
                 <h3>Strawberry</h3>
             </div><div class="card">
-                <div class="image white"></div>
-                <h3>Vanilla</h3>
-            </div>
-            <div class="card">
-                <div class="image chocolate"></div>
+                <div class="image horiz oreo"></div>
+                <h3>Oreo</h3>
+            </div><div class="card">
+                <div class="image horiz chocolate"></div>
                 <h3>Chocolate</h3>
             </div><div class="card">
-                <div class="image pink"></div>
-                <h3>Strawberry</h3>
+                <div class="image horiz nutella"></div>
+                <h3>Nutella</h3>
             </div><div class="card">
-                <div class="image white"></div>
-                <h3>Vanilla</h3>
-            </div>
-            <div class="card">
-                <div class="image chocolate"></div>
-                <h3>Chocolate</h3>
+                <div class="image horiz matcha"></div>
+                <h3>Matcha</h3>
             </div><div class="card">
-                <div class="image pink"></div>
-                <h3>Strawberry</h3>
+                <div class="image horiz cinnamon"></div>
+                <h3>Cinnamon</h3>
             </div><div class="card">
-                <div class="image white"></div>
-                <h3>Vanilla</h3>
-            </div>
-            <div class="card">
-                <div class="image chocolate"></div>
-                <h3>Chocolate</h3>
+                <div class="image horiz ube"></div>
+                <h3>Ube</h3>
             </div><div class="card">
-                <div class="image pink"></div>
-                <h3>Strawberry</h3>
+                <div class="image horiz espresso"></div>
+                <h3>Espresso</h3>
             </div><div class="card">
-                <div class="image white"></div>
-                <h3>Vanilla</h3>
+                <div class="image horiz kiwi"></div>
+                <h3>Kiwi</h3>
+            </div><div class="card">
+                <div class="image horiz candied-pecan"></div>
+                <h3>Candied Pecan</h3>
+            </div><div class="card">
+                <div class="image horiz candy-cane"></div>
+                <h3>Candy Cane</h3>
+            </div><div class="card">
+                <div class="image horiz brown-sugar"></div>
+                <h3>Brown Sugar</h3>
             </div>
         </div>
     </section>
@@ -634,7 +719,7 @@ form div {
         </div>
     </section>
     <section>
-        <h2 id="order">Order</h2>
+        <h2 id="order-page">Order</h2>
         <form id="orderform" onsubmit="submitForm(event)" method="post" style="margin-bottom:0px;">
             <div class="row">
                 <div>
@@ -667,7 +752,9 @@ form div {
                     required=""></textarea>
             </div>
             <div style="margin-bottom: 10px; text-align:center;">
-                <label>Orders are availabe for local pick-up only</label>
+                <label>$24 = 1 order = 24 macarons</label>
+                <label>An order can be split into 2 flavors</label>
+                <label>Local pick-up only</label>
             </div>
             <button id="submit-button" type="submit">Place your Order</button>
         </form>
@@ -692,29 +779,68 @@ function hideBurgerMenu(event) {
     let menu = document.querySelector('#navbar ul');
     menu.classList.add('hidden');
 }
-let prevScroll = undefined;
-function setNavBarSelected() {
-    scrollTimeout = undefined;
-    if (prevScroll == window.scrollY) {
-        return;
-    }
-    prevScroll = window.scrollY;
-    let found = false;
-    for (let item of h2Link) {
-        if (!found && item.header.getBoundingClientRect().y < 100) {//(window.innerHeight / 2)) {
-            item.nav.classList.add('active');
-            found = true;
-        } else {
-            item.nav.classList.remove('active');
-        }
+// let prevScroll = undefined;
+// function setNavBarSelected() {
+//     scrollTimeout = undefined;
+//     if (prevScroll == window.scrollY) {
+//         return;
+//     }
+//     prevScroll = window.scrollY;
+//     let found = false;
+//     for (let item of h2Link) {
+//         if (!found && item.header.getBoundingClientRect().y < 100) {//(window.innerHeight / 2)) {
+//             item.nav.classList.add('active');
+//             found = true;
+//         } else {
+//             item.nav.classList.remove('active');
+//         }
+//     }
+// }
+// setInterval(function (event) {
+//     if (scrollTimeout) {
+//         return;
+//     }
+//     scrollTimeout = setTimeout(setNavBarSelected, 500);
+// }, 500);
+const button = document.getElementById('submit-button');
+function submitForm(event) {
+    // stops the POST call
+    event.preventDefault();
+
+    // disables all of the user input
+    button.setAttribute('disabled','');
+    button.style.backgroundColor='#7c7c7cb8';
+    button.innerText = "Submitting order...";
+    let items = Array.from(event.target.querySelectorAll('input,textarea'));
+    items.forEach(x => x.setAttribute('readonly',''));
+
+    // name, email, tel, date, order
+    let url = 'https://api.ellisbakeshop.com/submitorder';
+    let xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("POST", url, true);
+    xmlHttp.onload = handle;
+    xmlHttp.send(JSON.stringify({
+        'name': getFieldValue('name'),
+        'email': getFieldValue('email'),
+        'tel': getFieldValue('tel'),
+        'date': getFieldValue('date'),
+        'order': getFieldValue('order'),
+    }));
+}
+function handle(event) {
+    let xmlHttp = event.target;
+    if (xmlHttp.status != 200) {
+        button.innerText = "Error submitting order!";
+    } else {
+        button.innerText = "Order submitted!";
+        button.style.backgroundColor = '#01ad16b8';
+        button.style.color = '#000';
     }
 }
-setInterval(function (event) {
-    if (scrollTimeout) {
-        return;
-    }
-    scrollTimeout = setTimeout(setNavBarSelected, 100);
-}, 100);
+function getFieldValue(elementId) {
+    const element = document.getElementById(elementId);
+    return element.value;
+}
     </script>
 
 </body>
