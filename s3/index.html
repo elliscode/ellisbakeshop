@@ -4,177 +4,842 @@
 <head>
     <meta charset="utf-8">
     <title>Ellis Bake Shop</title>
-    <meta name="description" content="">
-    <meta name="author" content="elliscode.com">
+    <meta name="description" content="Order your macarons today! Local pickup only!">
+    <meta name="author" content="Daniel Ellis Townsend">
     <meta name="viewport" content="width=device-width">
-    <link rel="shortcut icon" type="image/jpg" href="favicon.png"/>
+    <meta name="theme-color" content="#fdf0fb">
+    <link rel="shortcut icon" type="image/jpg" href="favicon.svg"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/normalize.css?v=001">
-    <link rel="stylesheet" href="css/skeleton.css?v=001">
-    <link rel="stylesheet" href="css/stylesheet.css?v=001">
-    <link rel="stylesheet" href="css/list.css?v=001">
+    <link href="https://fonts.googleapis.com/css2?family=Kameron:wght@400..700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.gstatic.com/s/kameron/v16/vm82dR7vXErQxuzngLk6LsfLcH4.woff2" as="font" type="font/woff" crossorigin="anonymous">
+    <style>
+@media only screen and (max-width: 250px) {
+    html {
+        scroll-padding-top: 50px;
+    }
+    div#header {
+        width: 100%;
+        height: 100px;
+    }
+    div#header h1 { 
+        font-size: 30px;
+        text-shadow: -1px 1px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 24px;
+    }
+    .bio-block {
+        flex-direction: column;
+    }
+    .bio-block {
+        margin: 0px 8px;
+    }
+    .bio-pic {
+        display:block;
+        background-image: url('img/ellis.png?v=001');
+        background-size: auto 100%;
+        width:160px;
+        min-width:160px;
+        height:160px;
+        border-radius:8px;
+    }
+    p {
+        font-size: 14px;
+        margin: 16px 0px;
+    }
+    .card {
+        width:calc(100vw / 1);
+        max-width:230px;
+    }
+    .image {
+        width:calc((100vw / 1) - 10px);
+        max-width:calc(230px - 10px);
+        height:calc((100vw / 1.5) - 10px);
+        max-height:calc(153px - 10px);
+    }
+    #navbar ul {
+        display: flex;
+        flex-direction: column;
+        position:absolute;
+        height: 100vh;
+        justify-content: flex-start;
+    }
+    #hamburger {
+        display: block;
+    }
+    .hidden {
+        display: none !important;
+    }
+    #navbar ul li:hover {
+        background-color: #ff62e7;
+        color: white!important;
+    }
+    #navbar ul li.active {
+        
+    }
+    form {
+        color: #4a4a4a;
+        margin: 8px;
+    }
+    form label {
+        font-size: 12px;
+    }
+    .row {
+        flex-direction: column;
+    }
+    form input {
+        width: 100%;
+        font-size: 14px;
+        height: 20px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        color: #4a4a4a;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+    form textarea {
+        height: 160px;
+        margin-bottom: 10px;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-size: 14px;
+    }
+    form button {
+        padding: 8px;
+        font-size: 14px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        margin-bottom: 20px;
+    }
+}
+@media only screen and (min-width: 251px) and (max-width: 270px) {
+    div#header h1 { 
+        font-size: 32px;
+    }
+}
+@media only screen and (min-width: 271px) and (max-width: 290px) {
+    div#header h1 { 
+        font-size: 34px;
+    }
+}
+@media only screen and (min-width: 291px) and (max-width: 320px) {
+    div#header h1 { 
+        font-size: 36px;
+    }
+}
+@media only screen and (min-width: 321px) and (max-width: 350px) {
+    div#header h1 { 
+        font-size: 38px;
+    }
+}
+@media only screen and (min-width: 351px) and (max-width: 500px) {
+    div#header h1 { 
+        font-size: 40px;
+    }
+}
+@media only screen and (min-width: 251px) and (max-width: 500px) {
+    html {
+        scroll-padding-top: 60px;
+    }
+    div#header {
+        width: 100%;
+        height: 100px;
+    }
+    div#header h1 {
+        text-shadow: -1px 1px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 30px;
+    }
+    .bio-block {
+        flex-direction: column;
+    }
+    .bio-block {
+        margin: 0px 15px;
+    }
+    .bio-pic {
+        display:block;
+        background-image: url('img/ellis.png?v=001');
+        background-size: auto 100%;
+        width:200px;
+        min-width:200px;
+        height:200px;
+        border-radius:15px;
+    }
+    p {
+        font-size: 16px;
+        margin: 32px 16px;
+    }
+    .card {
+        width:calc(100vw / 1);
+        max-width:300px;
+    }
+    .image {
+        width:calc((100vw / 1) - 10px);
+        max-width:calc(300px - 10px);
+        height:calc((100vw / 1.5) - 10px);
+        max-height:calc(200px - 10px);
+    }
+    #navbar ul {
+        display: flex;
+        flex-direction: column;
+        position:absolute;
+        height: 100vh;
+        justify-content: flex-start;
+    }
+    #hamburger {
+        display: block;
+    }
+    .hidden {
+        display: none !important;
+    }
+    #navbar ul li:hover {
+        background-color: #ff62e7;
+        color: white!important;
+    }
+    #navbar ul li.active {
+        
+    }
+    form {
+        color: #4a4a4a;
+        margin: 15px;
+    }
+    form label {
+        font-size: 16px;
+    }
+    .row {
+        flex-direction: column;
+    }
+    form input {
+        width: 100%;
+        font-size: 16px;
+        height: 24px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        color: #4a4a4a;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+    form textarea {
+        height: 160px;
+        margin-bottom: 10px;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-size: 16px;
+    }
+    form button {
+        padding: 8px;
+        font-size: 16px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        margin-bottom: 20px;
+    }
+}
+@media only screen and (min-width: 501px)and (max-width: 850px) {
+    .bio-block {
+        flex-direction: column;
+    }
+    .bio-block {
+        margin: 0px 20px;
+    }
+    .bio-text {
+        max-width: 700px;
+    }
+    .bio-pic {
+        display:block;
+        background-image: url('img/ellis.png?v=001');
+        background-size: auto 100%;
+        width:300px;
+        min-width:300px;
+        height:300px;
+        border-radius:30px;
+    }
+    p {
+        font-size: 20px;
+        margin: 40px;
+    }
+}
+@media only screen and (min-width: 851px) and (max-width: 1000px) {
+    .bio-block {
+        flex-direction: row;
+    }
+    .bio-block {
+        margin: 0px 20px;
+    }
+    .bio-text {
+        max-width: 500px;
+    }
+    .bio-pic {
+        display:block;
+        background-image: url('img/ellis.png?v=001');
+        background-size: auto 100%;
+        width:300px;
+        min-width:300px;
+        height:300px;
+        border-radius:30px;
+    }
+    p {
+        font-size: 20px;
+        margin: 40px;
+    }
+}
+@media only screen and (min-width: 501px) and (max-width: 1000px) {
+    html {
+        scroll-padding-top: 65px;
+    }
+    div#header {
+        width: 100%;
+        height: 200px;
+    }
+    div#header h1 { 
+        font-size: 55px;
+        text-shadow: -2px 2px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 35px;
+    }
+    .card {
+        width:calc(100vw / 2);
+        max-width:300px;
+    }
+    .image {
+        width:calc((100vw / 2) - 10px);
+        max-width:calc(300px - 10px);
+        height:calc((100vw / 3) - 10px);
+        max-height:calc(200px - 10px);
+    }
+    #navbar ul {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    #hamburger {
+        display: none;
+    }
+    #navbar ul li:hover {
+      border-bottom: 2px solid #ff62e7;
+    }
+    #navbar ul li.active {
+        border-bottom: 2px solid #4a4a4a;
+    }
+    form {
+        color: #4a4a4a;
+        margin: 20px;
+    }
+    form label {
+        font-size: 16px;
+    }
+    .row {
+        flex-direction: row;
+    }
+    .row div {
+        width: 50%;
+    }
+    .row div:first-child {
+        margin-right:5px;
+    }
+    .row div:last-child {
+        margin-left:5px;
+    }
+    form input {
+        width: 100%;
+        font-size: 20px;
+        height: 30px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        color: #4a4a4a;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+    form textarea {
+        height: 220px;
+        margin-bottom: 10px;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-size: 20px;
+    }
+    form button {
+        padding: 10px;
+        font-size: 20px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        margin-bottom: 20px;
+    }
+}
+
+@media only screen and (min-width: 1001px) {
+    html {
+        scroll-padding-top: 70px;
+    }
+    div#header {
+        width: 100%;
+        height: 300px;
+    }
+    div#header h1 { 
+        font-size: 90px;
+        text-shadow: -3px 3px 0px #4a4a4a;
+    }
+    h2 {
+        font-size: 40px;
+    }
+    h3 {
+        font-size: 30px;
+    }
+    .bio-block {
+        flex-direction: row;
+    }
+    .bio-block {
+        margin: 0px 25px;
+    }
+    .bio-text {
+        max-width: 900px;
+    }
+    .bio-pic {
+        display:block;
+        background-image: url('img/ellis.png?v=001');
+        background-size: auto 100%;
+        width:400px;
+        min-width:400px;
+        height:400px;
+        border-radius:30px;
+    }
+    p {
+        font-size: 25px;
+        margin: 50px;
+    }
+    .card {
+        width:calc(100vw / 3);
+        max-width:300px;
+    }
+    .image {
+        width:calc((100vw / 3) - 10px);
+        max-width:calc(300px - 10px);
+        height:calc((100vw / 4.5) - 10px);
+        max-height:calc(200px - 10px);
+    }
+    #navbar ul {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-evenly;
+    }
+    #hamburger {
+        display: none;
+    }
+    #navbar ul li:hover {
+      border-bottom: 2px solid #ff62e7;
+    }
+    #navbar ul li.active {
+        border-bottom: 2px solid #4a4a4a;
+    }
+    form {
+        color: #4a4a4a;
+        margin: 25px;
+        max-width: 1000px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    form label {
+        font-size: 20px;
+    }
+    .row {
+        flex-direction: row;
+    }
+    .row div {
+        width: 50%;
+    }
+    .row div:first-child {
+        margin-right:5px;
+    }
+    .row div:last-child {
+        margin-left:5px;
+    }
+    form input {
+        width: 100%;
+        font-size: 25px;
+        height: 40px;
+        box-sizing: border-box;
+        margin-bottom: 10px;
+        color: #4a4a4a;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    }
+    form textarea {
+        height: 300px;
+        margin-bottom: 10px;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        font-size: 25px;
+    }
+    form button {
+        padding: 10px;
+        font-size: 25px;
+        width: 100%;
+        box-sizing: border-box;
+        font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        margin-bottom: 10px;
+    }
+}
+#hamburger {
+    background-color: #ffffff00;
+    border: none;
+    cursor: pointer;
+}
+#navbar {
+    position:relative;
+}
+#navbar ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+  background-color: #fdf0fb;
+}
+#navbar ul li {
+  margin: 0;
+  padding: 15px;
+  box-sizing: border-box;
+  border-bottom: 2px solid #ffffff00;
+}
+a {
+    color: #ff62e7;
+}
+a:hover {
+    color: #f1a1e3;
+}
+#navbar ul a {
+    color: #4a4a4a;
+    text-decoration: none;
+}
+#navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: #fdf0fb;
+}
+html {
+    scroll-behavior: smooth;
+}
+body {
+    margin: 0px;
+    padding: 0px;
+    font-family:"Kameron", Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+    background-color: white;/*#fdf0fb;*/
+}
+@keyframes animatedBackground {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 100px 0;
+  }
+}
+div#header {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAAABCAYAAAAo2wu9AAABg2lDQ1BJQ0MgcHJvZmlsZQAAKJF9kT1Iw0AcxV9bS0WqDnYoIpKhOtlFRRxrFYpQIdQKrTqYXPoFTRqSFBdHwbXg4Mdi1cHFWVcHV0EQ/ABxF5wUXaTE/yWFFjEeHPfj3b3H3TvA36wy1exJAKpmGZlUUsjlV4XQK4IYxQBCiErM1OdEMQ3P8XUPH1/v4jzL+9yfo18pmAzwCcQJphsW8QbxzKalc94njrCypBCfE08YdEHiR67LLr9xLjns55kRI5uZJ44QC6UulruYlQ2VeJo4pqga5ftzLiuctzir1Tpr35O/MFzQVpa5TnMEKSxiCSIEyKijgiosxGnVSDGRof2kh3/Y8YvkkslVASPHAmpQITl+8D/43a1ZnJp0k8JJIPhi2x9jQGgXaDVs+/vYtlsnQOAZuNI6/loTmP0kvdHRYkfA4DZwcd3R5D3gcgeIPumSITlSgKa/WATez+ib8sDQLdC35vbW3sfpA5ClrtI3wMEhMF6i7HWPd/d29/bvmXZ/P2hkcqLYZ48KAAAABmJLR0QA/gDNAObeWRcdAAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH6QUeDhQPMTao+AAAABl0RVh0Q29tbWVudABDcmVhdGVkIHdpdGggR0lNUFeBDhcAAAAXSURBVBjTY/x39tl/hmEAGAUFh4M3GADb/APVGW5ZewAAAABJRU5ErkJggg==');
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    animation: animatedBackground 15s linear infinite;
+    /* box-shadow: 0px 0px 8px; */
+}
+div#header h1 {
+    margin:0px;
+    color: white;
+    -webkit-text-stroke: 1px #4a4a4a;
+    font-weight: 700;
+    text-align:center;
+}
+section {
+    min-height: calc(100vh - 70px);
+}
+h2 {
+    color: #4a4a4a;
+    font-weight: 600;
+    text-align:center;
+}
+h3 {
+    color: #4a4a4a;
+    text-align:center;
+    margin: 5px;
+}
+.bio-block {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.card-box {
+    display:flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+form div {
+    display:flex;
+    flex-direction: column;
+}
+.image {
+    margin-left: 5px;
+    background-repeat: no-repeat;
+    background-position: center;
+    border-radius: 30px;
+    border: 2px solid #f6cfe5;
+    box-sizing:border-box;
+}
+.horiz {
+    background-size: auto 100%;
+}
+.vert {
+    background-size: 100% auto;
+}
+.chocolate {
+    background-image: url('img/chocolate.png?v=001');
+}
+.matcha {
+    background-image: url('img/matcha.png?v=001');
+}
+.oreo {
+    background-image: url('img/oreo.png?v=001');
+}
+.candy-cane {
+    background-image: url('img/candy-cane.png?v=001');
+}
+.brown-sugar {
+    background-image: url('img/brown-sugar.png?v=001');
+}
+.candied-pecan {
+    background-image: url('img/candied-pecan.png?v=001');
+}
+.cinnamon {
+    background-image: url('img/cinnamon.png?v=001');
+}
+.kiwi {
+    background-image: url('img/kiwi.png?v=001');
+}
+.nutella {
+    background-image: url('img/nutella.png?v=001');
+}
+.ube {
+    background-image: url('img/ube.png?v=001');
+}
+.espresso {
+    background-image: url('img/espresso.png?v=001');
+}
+.peach {
+    background-image: url('img/peach.png?v=001');
+}
+.lemon {
+    background-image: url('img/lemon.png?v=001');
+}
+.blueberry {
+    background-image: url('img/blueberry.png?v=001');
+}
+.strawberry {
+    background-image: url('img/strawberry.png?v=001');
+}
+.vanilla {
+    background-image: url('img/vanilla.png?v=001');
+}
+.raspberry {
+    background-image: url('img/raspberry.png?v=001');
+}
+    </style>
 </head>
 
 <body>
-<div id="header">
-    <h1>Ellis Bake Shop</h1>
-</div>
-
-<a href="https://instagram.com/ellisbakeshop" id="insta"><img src="insta.png"
-                                                              alt="Instagram Account for ellisbakeshop.com"/></a>
-<div id="main" class="container">
-    <div class="row">
-        <div class="column">
-            <div class="cell blob">
-                <h2>Menu</h2>
-            </div>
-        </div>
+    <div id="header">
+        <h1>Ellis Bake Shop</h1>
     </div>
-    <div class="row">
-        <div class="twelve columns">
-            <div class="cell blob">
-                <h3>Pies</h3>
-
-                <ul>
-                    <li><span>Pumpkin</span><span></span><span>$15</span></li>
-                    <li><span>Sweet Potato</span><span></span><span>$15</span></li>
-                    <li><span>Apple</span><span></span><span>$15</span></li>
-                    <li><span>Peach</span><span></span><span>$15</span></li>
-                    <li><span>Pecan</span><span></span><span>$20</span></li>
-                    <li><span>Strawberry Rhubarb</span><span></span><span>$20</span></li>
-                    <li><span>Cherry</span><span></span><span>$25</span></li>
-                    <li><span>Triple Berry</span><span></span><span>$25</span></li>
-                </ul>
-                <p style="text-align:center;">All pies available based on seasonal ingredient availability</p>
-            </div>
-        </div>
-        <div class="twelve columns">
-            <div class="cell blob">
-                <h3>Macarons</h3>
-                <ul>
-                    <li><span>1 order (25 cookies)</span><span></span><span>$25</span></li>
-                    <li><span>Multi-color shells</span><span></span><span>&plus;$5 per additional color</span></li>
-                    <li><span>Toppings</span><span></span><span>&plus;$5 per topping</span></li>
-                </ul>
-                <h3>Flavors</h3>
-                <ul class="inline">
-                    <li>Chocolate</li>
-                    <li>Vanilla</li>
-                    <li>Oreo</li>
-                    <li>Nutella</li>
-                    <li>Cinnamon</li>
-                    <li>Coconut</li>
-                    <li>Lemon</li>
-                    <li>Peanut Butter</li>
-                    <li>Brown Sugar</li>
-                    <li>Strawberry</li>
-                    <li>Raspberry</li>
-                    <li>Blueberry</li>
-                    <li>Kiwi</li>
-                    <li>Peach</li>
-                    <li>Candy Cane</li>
-                    <li>Candied Walnut</li>
-                    <li>Candied Pecan</li>
-                    <li>Matcha</li>
-                    <li>Espresso</li>
-                </ul>
-
-                <h3>Toppings</h3>
-                <ul class="inline">
-                    <li>Chocolate drizzle</li>
-                </ul>
-
-            </div>
-
-        </div>
+    <div id="navbar">
+        <button onclick="toggleBurgerMenu(event);" id="hamburger"><svg height="32px" id="Layer_1" style="enable-background:new 0 0 32 32;" version="1.1" viewBox="0 0 32 32" width="32px" xml:space="preserve" sodipodi:docname="Hamburger_icon.svg" inkscape:version="1.3.2 (091e20e, 2023-11-25)" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg"><defs id="defs1" /><sodipodi:namedview id="namedview1" pagecolor="#ffffff" bordercolor="#000000" borderopacity="0.25" inkscape:showpageshadow="2" inkscape:pageopacity="0.0" inkscape:pagecheckerboard="0" inkscape:deskcolor="#d1d1d1" inkscape:zoom="10.386806" inkscape:cx="25.65755" inkscape:cy="27.727484" inkscape:window-width="1728" inkscape:window-height="1051" inkscape:window-x="0" inkscape:window-y="38" inkscape:window-maximized="1" inkscape:current-layer="Layer_1" /><path d="m 4,10.685408 h 24 c 0.552,0 2.002554,6.24e-4 2.002554,6.24e-4 0,0 -0.0026,-1.4486256 -0.0026,-2.0006256 0,-1.104 -0.896,-2 -2,-2 H 4 c -1.104,0 -2,0.896 -2,2 0,0.552 -0.00384,2.0038456 -0.00384,2.0038456 0,0 1.4518438,-0.0038 2.0038438,-0.0038 z" id="path5" sodipodi:nodetypes="scccssscs" style="fill:#ff99e7;fill-opacity:1" /><path d="M 28,21.314592 H 4 c -0.552,0 -2.0005277,-5.28e-4 -2.0005277,-5.28e-4 0,0 5.277e-4,1.448528 5.277e-4,2.000528 0,1.104 0.896,2 2,2 h 24 c 1.104,0 2,-0.896 2,-2 0,-0.538794 0.01063,-2.005592 0.01063,-2.005592 0,0 -1.445425,0.0056 -2.010631,0.0056 z" id="path4" sodipodi:nodetypes="sscsssscs" inkscape:label="path4" style="fill:#ff99e7;fill-opacity:1" /><path d="M 28,22 H 4 C 3.448,22 1.9994723,21.999472 1.9994723,21.999472 1.9994723,21.999472 2,23.448 2,24 c 0,1.104 0.896,2 2,2 h 24 c 1.104,0 2,-0.896 2,-2 0,-0.538794 0.01063,-2.005592 0.01063,-2.005592 0,0 -1.445425,0.0056 -2.010631,0.0056 z" id="path3" sodipodi:nodetypes="sscsssscs" style="fill:#ff62e7;fill-opacity:1" /><path d="M 28,14 H 4 c -1.104,0 -2,0.896 -2,2 0,1.104 0.896,2 2,2 h 24 c 1.104,0 2,-0.896 2,-2 0,-1.104 -0.896,-2 -2,-2 z" id="path2" style="fill:#ff9ce7;fill-opacity:1" /><path d="m 4,10 h 24 c 0.552,0 2.002554,6.24e-4 2.002554,6.24e-4 C 30.002554,10.000624 30,8.552 30,8 30,6.896 29.104,6 28,6 H 4 C 2.896,6 2,6.896 2,8 2,8.552 1.9961562,10.003844 1.9961562,10.003844 1.9961562,10.003844 3.448,10 4,10 Z" id="path1" sodipodi:nodetypes="scccssscs" style="fill:#ff62e7;fill-opacity:1" /></svg></button>
+        <ul class="hidden">
+            <a onclick="hideBurgerMenu(event);" href="#macarons"><li>Macarons</li></a>
+            <a onclick="hideBurgerMenu(event);" href="#about"><li>About</li></a>
+            <a onclick="hideBurgerMenu(event);" href="#order-page"><li>Order</li></a>
+        </ul>
     </div>
-    <div class="row">
-        <div class="column">
-            <div class="cell blob">
-                <h2>Order Form</h2>
-                <form id="orderform" onsubmit="submitForm(event)" method="post" style="margin-bottom:0px;">
-                    <div class="row">
-                        <div class="six columns">
-                            <label for="name">Your Name:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="text" id="name" name="name"
-                                   placeholder="Firstname Lastname" required/>
-                        </div>
-                        <div class="six columns">
-                            <label for="email">Your Email:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="email" id="email" name="email"
-                                   placeholder="youremail@website.com" required autocomplete="email"/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="six columns">
-                            <label for="tel">Phone Number:</label>
-                            <input class="u-full-width" style="margin-bottom:10px;" type="tel" id="tel" name="tel"
-                                   placeholder="(XXX) XXX-XXXX" required/>
-                        </div>
-                        <div class="six columns">
-                            <label for="date">Pickup Date:</label>
-                            <input class="u-full-width" style="height:38px; margin-bottom:10px;" type="date" id="date"
-                                   name="date" required/>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="twelve columns">
-                            <label for="order">Your Order:</label>
-                            <textarea class="u-full-width" style="height:200px;margin-bottom:0px;" id="order"
-                                      name="order"
-                                      placeholder="Please include a list of the items you would like to order, any special requests, and any other information you would like me to know"
-                                      required></textarea>
-                        </div>
-                    </div>
-                    <button id="submit-button" type="submit">Place your Order</button>
-                </form>
+    <section>
+        <h2 id="macarons">Macarons</h2>
+        <div class="card-box">
+            <div class="card">
+                <div class="image vert raspberry"></div>
+                <h3>Raspberry</h3>
+            </div><div class="card">
+                <div class="image vert lemon"></div>
+                <h3>Lemon</h3>
+            </div><div class="card">
+                <div class="image vert vanilla"></div>
+                <h3>Vanilla</h3>
+            </div><div class="card">
+                <div class="image vert oreo"></div>
+                <h3>Oreo</h3>
+            </div><div class="card">
+                <div class="image vert ube"></div>
+                <h3>Ube</h3>
+            </div><div class="card">
+                <div class="image vert strawberry"></div>
+                <h3>Strawberry</h3>
+            </div><div class="card">
+                <div class="image vert blueberry"></div>
+                <h3>Blueberry</h3>
+            </div><div class="card">
+                <div class="image vert cinnamon"></div>
+                <h3>Cinnamon</h3>
+            </div><div class="card">
+                <div class="image vert candy-cane"></div>
+                <h3>Candy Cane</h3>
+            </div><div class="card">
+                <div class="image vert peach"></div>
+                <h3>Peach</h3>
+            </div><div class="card">
+                <div class="image horiz chocolate"></div>
+                <h3>Chocolate</h3>
+            </div><div class="card">
+                <div class="image horiz nutella"></div>
+                <h3>Nutella</h3>
+            </div><div class="card">
+                <div class="image horiz matcha"></div>
+                <h3>Matcha</h3>
+            </div><div class="card">
+                <div class="image horiz espresso"></div>
+                <h3>Espresso</h3>
+            </div><div class="card">
+                <div class="image horiz kiwi"></div>
+                <h3>Kiwi</h3>
+            </div><div class="card">
+                <div class="image horiz candied-pecan"></div>
+                <h3>Candied Pecan</h3>
             </div>
         </div>
-    </div>
-</div>
-<script>
-    const button = document.getElementById('submit-button');
-    function submitForm(event) {
-        // stops the POST call
-        event.preventDefault();
+    </section>
+    <section>
+        <h2 id="about">About</h2>
+        <div class="bio-block">
+        <div class="bio-pic">
+        </div>
+        <div class="bio-text">
+        <p>Hi, I'm Daniel Ellis Townsend from Cherry Hill, NJ, and I love macarons.</p><p>What started as a COVID lockdown hobby quickly turned into a passion, with my daughter proudly serving as my most loyal (and non-paying!) customer. I make all my fruit fillings using real freeze-dried fruit for bold, authentic flavor in every bite.</p><p>Thanks for supporting small, sweet businesses, and <a href="https://www.instagram.com/ellisbakeshop/">check out my Instagram @ellisbakeshop</a>!</p>
+        </div>
+        </div>
+    </section>
+    <section>
+        <h2 id="order-page">Order</h2>
+        <form id="orderform" onsubmit="submitForm(event)" method="post" style="margin-bottom:0px;">
+            <div class="row">
+                <div>
+                    <label for="name">Your Name:</label>
+                    <input type="text" id="name" name="name"
+                        placeholder="Firstname Lastname" required="">
+                </div>
+                <div>
+                    <label for="email">Your Email:</label>
+                    <input type="email" id="email" name="email"
+                        placeholder="youremail@website.com" required="" autocomplete="email">
+                </div>
+            </div>
+            <div class="row">
+                <div>
+                    <label for="tel">Phone Number:</label>
+                    <input type="tel" id="tel" name="tel"
+                        placeholder="(XXX) XXX-XXXX" required="">
+                </div>
+                <div>
+                    <label for="date">Pickup Date:</label>
+                    <input type="date" id="date" name="date"
+                        required="">
+                </div>
+            </div>
+            <div>
+                <label for="order">Your Order:</label>
+                <textarea id="order" name="order"
+                    placeholder="Please include a list of the items you would like to order, any special requests, and any other information you would like me to know"
+                    required=""></textarea>
+            </div>
+            <div style="margin-bottom: 10px; text-align:center;">
+                <label>$24 = 1 order = 24 macarons</label>
+                <label>An order can be split into 2 flavors</label>
+                <label>Local pick-up only</label>
+            </div>
+            <button id="submit-button" type="submit">Place your Order</button>
+        </form>
+    </section>
+    <script>
+let scrollTimeout = undefined;
+let h2s = Array.from(document.getElementsByTagName('h2'));
+h2s.reverse();
+let links = Array.from(document.querySelectorAll('#navbar ul li'));
+let h2Link = h2s.map(function (h2) {
+    return {header: h2, nav: links.find(function (x) { return x.parentElement.href.endsWith('#' + h2.id); })};
+});
+function toggleBurgerMenu(event) {
+    let menu = document.querySelector('#navbar ul');
+    if (menu.classList.contains('hidden')) {
+        menu.classList.remove('hidden');
+    } else {
+        menu.classList.add('hidden');
+    }
+}
+function hideBurgerMenu(event) {
+    let menu = document.querySelector('#navbar ul');
+    menu.classList.add('hidden');
+}
+// let prevScroll = undefined;
+// function setNavBarSelected() {
+//     scrollTimeout = undefined;
+//     if (prevScroll == window.scrollY) {
+//         return;
+//     }
+//     prevScroll = window.scrollY;
+//     let found = false;
+//     for (let item of h2Link) {
+//         if (!found && item.header.getBoundingClientRect().y < 100) {//(window.innerHeight / 2)) {
+//             item.nav.classList.add('active');
+//             found = true;
+//         } else {
+//             item.nav.classList.remove('active');
+//         }
+//     }
+// }
+// setInterval(function (event) {
+//     if (scrollTimeout) {
+//         return;
+//     }
+//     scrollTimeout = setTimeout(setNavBarSelected, 500);
+// }, 500);
+const button = document.getElementById('submit-button');
+function submitForm(event) {
+    // stops the POST call
+    event.preventDefault();
 
-        // disables all of the user input
-        button.setAttribute('disabled','');
-        button.style.backgroundColor='#7c7c7cb8';
-        button.innerText = "Submitting order...";
-        let items = Array.from(event.target.querySelectorAll('input,textarea'));
-        items.forEach(x => x.setAttribute('readonly',''));
+    // disables all of the user input
+    button.setAttribute('disabled','');
+    button.style.backgroundColor='#7c7c7cb8';
+    button.innerText = "Submitting order...";
+    let items = Array.from(event.target.querySelectorAll('input,textarea'));
+    items.forEach(x => x.setAttribute('readonly',''));
 
-        // name, email, tel, date, order
-        let url = 'https://api.ellisbakeshop.com/submitorder';
-        let xmlHttp = new XMLHttpRequest();
-        xmlHttp.open("POST", url, true);
-        xmlHttp.onload = handle;
-        xmlHttp.send(JSON.stringify({
-            'name': getFieldValue('name'),
-            'email': getFieldValue('email'),
-            'tel': getFieldValue('tel'),
-            'date': getFieldValue('date'),
-            'order': getFieldValue('order'),
-        }));
+    // name, email, tel, date, order
+    let url = 'https://api.ellisbakeshop.com/submitorder';
+    let xmlHttp = new XMLHttpRequest();
+    xmlHttp.open("POST", url, true);
+    xmlHttp.onload = handle;
+    xmlHttp.send(JSON.stringify({
+        'name': getFieldValue('name'),
+        'email': getFieldValue('email'),
+        'tel': getFieldValue('tel'),
+        'date': getFieldValue('date'),
+        'order': getFieldValue('order'),
+    }));
+}
+function handle(event) {
+    let xmlHttp = event.target;
+    if (xmlHttp.status != 200) {
+        button.innerText = "Error submitting order!";
+    } else {
+        button.innerText = "Order submitted!";
+        button.style.backgroundColor = '#01ad16b8';
+        button.style.color = '#000';
     }
-    function handle(event) {
-        let xmlHttp = event.target;
-        if (xmlHttp.status != 200) {
-            button.innerText = "Error submitting order!";
-        } else {
-            button.innerText = "Order submitted!";
-            button.style.backgroundColor = '#01ad16b8';
-            button.style.color = '#000';
-        }
-    }
-    function getFieldValue(elementId) {
-        const element = document.getElementById(elementId);
-        return element.value;
-    }
-</script>
+}
+function getFieldValue(elementId) {
+    const element = document.getElementById(elementId);
+    return element.value;
+}
+    </script>
+
 </body>
 
 </html>

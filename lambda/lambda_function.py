@@ -25,6 +25,7 @@ from ellisbakeshop.utils import (
     time,
     os,
     boto3,
+    is_blacklisted_email,
 )
 from ellisbakeshop.sms_scheduler import schedule_sms
 
@@ -257,31 +258,45 @@ def order_route(event):
     date = body["date"]
     order = body["order"]
 
-    parsed_date = parse_sent_date(date)
-
-    email_text = send_email(name, phone, email, date, order)
-    send_text(name, phone, email, date, order)
-    parsed_phone = parse_valid_us_phone_number(phone)
-    if parsed_phone and parsed_date:
-        send_confirmation_text(parsed_phone)
-        schedule_reminders(event, parsed_date)
-        store_communication(parsed_phone, parsed_phone, email_text, {"name": name, "email": email})
-
-        return {
-            "statusCode": 200,
-            "body": "Successfully submitted order",
-            "headers": {
-                "Access-Control-Allow-Origin": "https://www.ellisbakeshop.com",
-            },
-        }
-
-    return {
-        "statusCode": 206,
-        "body": "Partially submitted order",
+    fake_success = {
+        "statusCode": 200,
+        "body": "Successfully submitted order",
         "headers": {
             "Access-Control-Allow-Origin": "https://www.ellisbakeshop.com",
         },
     }
+
+    # Validate before sending anything, so spam never costs a Twilio/SES send.
+    # Always return a real-looking 200 on failure so spammers can't tell what was rejected.
+    parsed_date = parse_sent_date(date)
+    if parsed_date is None:
+        print(f"Rejected order: unparseable date {date}")
+        return fake_success
+
+    now = datetime.datetime.now()
+    if parsed_date < now:
+        print(f"Rejected order: date in the past {date}")
+        return fake_success
+    if parsed_date > now + datetime.timedelta(days=365):
+        print(f"Rejected order: date too far in the future {date}")
+        return fake_success
+
+    if is_blacklisted_email(email):
+        print(f"Rejected order: blacklisted email domain {email}")
+        return fake_success
+
+    parsed_phone = parse_valid_us_phone_number(phone)
+    if parsed_phone is None:
+        print(f"Rejected order: invalid phone {phone}")
+        return fake_success
+
+    email_text = send_email(name, phone, email, date, order)
+    send_text(name, phone, email, date, order)
+    send_confirmation_text(parsed_phone)
+    schedule_reminders(event, parsed_date)
+    store_communication(parsed_phone, parsed_phone, email_text, {"name": name, "email": email})
+
+    return fake_success
 
 
 def parse_sent_date(date):
