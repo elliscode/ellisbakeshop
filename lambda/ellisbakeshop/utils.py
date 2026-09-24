@@ -16,6 +16,11 @@ SMS_SQS_QUEUE_URL = os.environ.get("SMS_SQS_QUEUE_URL")
 SMS_SQS_QUEUE_ARN = os.environ.get("SMS_SQS_QUEUE_ARN")
 SMS_SCHEDULER_ROLE_ARN = os.environ.get("SMS_SCHEDULER_ROLE_ARN")
 TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM = os.environ.get("TWILIO_NUMBER_TO_SEND_THE_MESSAGE_FROM")
+EMAIL_DOMAIN_BLACKLIST = {
+    domain.strip().lower()
+    for domain in os.environ.get("EMAIL_DOMAIN_BLACKLIST", "").split(",")
+    if domain.strip()
+}
 
 digits = "0123456789"
 lowercase_letters = "abcdefghijklmnopqrstuvwxyz"
@@ -51,6 +56,11 @@ def format_response(event, http_code, body, headers=None):
         "body": json.dumps(body),
         "headers": all_headers,
     }
+
+
+def is_blacklisted_email(email):
+    domain = email.rsplit("@", 1)[-1].strip().lower()
+    return domain in EMAIL_DOMAIN_BLACKLIST
 
 
 def parse_cookie(input):
